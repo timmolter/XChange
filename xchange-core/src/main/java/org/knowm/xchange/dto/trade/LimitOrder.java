@@ -17,7 +17,11 @@ import org.knowm.xchange.dto.Order;
 public class LimitOrder extends Order implements Comparable<LimitOrder> {
 
   /** The limit price */
-  protected final BigDecimal limitPrice;
+  protected BigDecimal limitPrice;
+
+  public LimitOrder() {
+  	super();
+  }
 
   /**
    * @param type Either BID (buying) or ASK (selling)

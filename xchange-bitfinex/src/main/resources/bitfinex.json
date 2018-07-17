@@ -1,10 +1,62 @@
 {
   "currency_pairs": {
-    "BTC/USD": {
+    "ZRX/USD": {
       "price_scale": 2,
       "min_amount": 0.01000000
     },
-    "BTG/USD": {
+    "ZRX/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "ZRX/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "AID/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "AID/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "AID/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "REP/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "REP/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "REP/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "AVT/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "AVT/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "AVT/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "BAT/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "BAT/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "BAT/ETH": {
       "price_scale": 2,
       "min_amount": 0.01000000
     },
@@ -12,109 +64,409 @@
       "price_scale": 2,
       "min_amount": 0.01000000
     },
+    "BTC/JPY": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
     "BTC/GBP": {
       "price_scale": 2,
       "min_amount": 0.01000000
     },
-    "LTC/USD": {
-      "price_scale": 4,
-      "min_amount": 0.10000000
+    "BTC/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
     },
-    "LTC/BTC": {
-      "price_scale": 6,
-      "min_amount": 0.10000000
+    "BCH/USD": {
+      "price_scale": 4,
+      "min_amount": 0.01000000
+    },
+    "BCH/BTC": {
+      "price_scale": 8,
+      "min_amount": 0.01000000
+    },
+    "BCH/ETH": {
+      "price_scale": 8,
+      "min_amount": 0.01000000
+    },
+    "BTG/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
     },
     "BTG/BTC": {
       "price_scale": 6,
-      "min_amount": 0.10000000
+      "min_amount": 0.01000000
     },
-    "ETH/USD": {
+    "DASH/USD": {
       "price_scale": 4,
-      "min_amount": 0.10000000
+      "min_amount": 0.01000000
+    },
+    "DASH/BTC": {
+      "price_scale": 6,
+      "min_amount": 0.01000000
+    },
+    "MNA/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "MNA/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "EOS/EUR": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "EOS/JPY": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "EOS/GBP": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "EOS/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "EOS/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "EOS/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "ETP/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "ETP/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "ETP/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "EDO/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "EDO/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "EDO/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
     },
     "ETH/EUR": {
       "price_scale": 4,
       "min_amount": 0.10000000
     },
+    "ETH/JPY": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
     "ETH/GBP": {
       "price_scale": 4,
       "min_amount": 0.10000000
     },
+    "ETH/USD": {
+      "price_scale": 4,
+      "min_amount": 0.01000000
+    },
     "ETH/BTC": {
       "price_scale": 6,
-      "min_amount": 0.100000000
+      "min_amount": 0.01000000
     },
     "ETC/USD": {
       "price_scale": 4,
-      "min_amount": 0.10000000
+      "min_amount": 0.01000000
     },
     "ETC/BTC": {
       "price_scale": 6,
-      "min_amount": 0.100000000
+      "min_amount": 0.01000000
     },
-    "ZEC/BTC": {
-      "price_scale": 6,
-      "min_amount": 0.0100000
+    "FUN/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
     },
-    "IOT/BTC": {
-      "price_scale": 8,
-      "min_amount": 0.0100000
+    "FUN/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
     },
-    "ZEC/USD": {
+    "FUN/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "GNT/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "GNT/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "GNT/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "IOTA/JPY": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "IOTA/GBP": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "IOTA/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "IOTA/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "IOTA/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "LTC/USD": {
       "price_scale": 4,
-      "min_amount": 0.0100000
+      "min_amount": 0.01000000
     },
-    "XMR/BTC": {
+    "LTC/BTC": {
       "price_scale": 6,
-      "min_amount": 0.100000000
+      "min_amount": 0.01000000
     },
     "XMR/USD": {
       "price_scale": 4,
-      "min_amount": 0.100000000
+      "min_amount": 0.01000000
     },
-    "XRP/USD": {
-      "price_scale": 4,
-      "min_amount": 0.100000000
-    },
-    "DASH/BTC": {
+    "XMR/BTC": {
       "price_scale": 6,
-      "min_amount": 0.10000000
+      "min_amount": 0.01000000
     },
-    "DASH/USD": {
-      "price_scale": 4,
-      "min_amount": 0.10000000
+    "NEO/EUR": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
     },
-    "RRT/BTC": {
-      "price_scale": 6,
-      "min_amount": 0.100000000
+    "NEO/JPY": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
     },
-    "RRT/USD": {
-      "price_scale": 4,
-      "min_amount": 0.100000000
+    "NEO/GBP": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
     },
-    "XRP/BTC": {
-      "price_scale": 8,
-      "min_amount": 0.10000000
+    "NEO/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
     },
-    "BCH/BTC": {
-      "price_scale": 8,
-      "min_amount": 0.10000000
+    "NEO/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
     },
-    "BCH/ETH": {
-      "price_scale": 8,
-      "min_amount": 0.10000000
+    "NEO/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "OMG/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
     },
     "OMG/BTC": {
       "price_scale": 8,
-      "min_amount": 0.10000000
+      "min_amount": 0.01000000
     },
     "OMG/ETH": {
       "price_scale": 8,
-      "min_amount": 0.1
+      "min_amount": 0.01000000
     },
-    "BCH/USD": {
+    "QASH/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "QASH/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "QASH/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "QTUM/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "QTUM/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "QTUM/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "RCN/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "RCN/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "RCN/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "RRT/USD": {
       "price_scale": 4,
-      "min_amount": 0.10000000
+      "min_amount": 0.01000000
+    },
+    "RRT/BTC": {
+      "price_scale": 6,
+      "min_amount": 0.01000000
+    },
+    "XRP/USD": {
+      "price_scale": 4,
+      "min_amount": 0.01000000
+    },
+    "XRP/BTC": {
+      "price_scale": 8,
+      "min_amount": 0.01000000
+    },
+    "SAN/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "SAN/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "SING/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "SING/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "SING/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "SPK/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "SPK/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "SPK/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "SNT/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "SNT/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "SNT/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "DATA/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "DATA/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "DATA/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "TRX/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "TRX/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "TRX/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "TNB/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "TNB/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "TNB/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "YYW/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "YYW/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "YYW/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "ZEC/USD": {
+      "price_scale": 4,
+      "min_amount": 0.01000000
+    },
+    "ZEC/BTC": {
+      "price_scale": 6,
+      "min_amount": 0.01000000
+    },
+    "ELF/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "ELF/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "ELF/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "RLC/USD": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "RLC/BTC": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "RLC/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "SAN/ETH": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
+    },
+    "IOTA/EUR": {
+      "price_scale": 2,
+      "min_amount": 0.01000000
     }
   },
   "currencies": {
@@ -178,7 +530,7 @@
       "scale": 8,
       "withdrawal_fee":  0.31641
     },
-    "IOT": {
+    "IOTA": {
       "scale": 8,
       "withdrawal_fee": 0.5
     },

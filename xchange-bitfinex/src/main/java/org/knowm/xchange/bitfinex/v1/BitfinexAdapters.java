@@ -55,7 +55,14 @@ public final class BitfinexAdapters {
     String currency = bitfinexSymbol.toUpperCase();
     if (currency.equals("DSH")) {
       currency = "DASH";
+    } else if (currency.equals("QTM")) {
+      currency = "QTUM";
+    } else if (currency.equals("QSH")) {
+      currency = "QASH";
+    } else if (currency.equals("DAT")) {
+      currency = "DATA";
     }
+
     return currency;
   }
 

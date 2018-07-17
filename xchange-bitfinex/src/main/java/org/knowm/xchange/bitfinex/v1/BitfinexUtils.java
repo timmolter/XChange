@@ -13,6 +13,12 @@ public final class BitfinexUtils {
     String currency = xchangeSymbol.toLowerCase();
     if (currency.equals("dash")) {
       currency = "dsh";
+    } else if (currency.equals("qtum")) {
+      currency = "qtm";
+    } else if (currency.equals("qash")) {
+      currency = "qsh";
+    } else if (currency.equals("data")) {
+      currency = "dat";
     }
     return currency;
   }

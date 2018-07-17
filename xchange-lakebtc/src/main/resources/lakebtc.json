@@ -1,9 +1,75 @@
 {
   "currency_pairs": {
     "BTC/USD": {
+      "price_scale": 2
+    },
+    "BTC/EUR": {
+      "price_scale": 2
+    },
+    "BTC/JPY": {
+      "price_scale": 0
+    },
+    "BTC/GBP": {
+      "price_scale": 2
+    },
+    "BTC/AUD": {
+      "price_scale": 2
+    },
+    "BTC/CAD": {
+      "price_scale": 2
+    },
+    "BTC/SGD": {
+      "price_scale": 2
+    },
+    "BTC/CHF": {
+      "price_scale": 2
+    },
+    "BTC/NZD": {
+      "price_scale": 0
+    },
+    "BTC/NGN": {
+      "price_scale": 0
+    },
+    "EUR/USD": {
       "price_scale": 4
     },
-    "BTC/CNY": {
+    "GBP/USD": {
+      "price_scale": 4
+    },
+    "USD/JPY": {
+      "price_scale": 2
+    },
+    "USD/HKD": {
+      "price_scale": 4
+    },
+    "USD/CAD": {
+      "price_scale": 4
+    },
+    "USD/SGD": {
+      "price_scale": 4
+    },
+    "AUD/USD": {
+      "price_scale": 4
+    },
+    "NZD/USD": {
+      "price_scale": 4
+    },
+    "USD/CHF": {
+      "price_scale": 4
+    },
+    "USD/NGN": {
+      "price_scale": 0
+    },
+    "ETH/BTC": {
+      "price_scale": 4
+    },
+    "LTC/BTC": {
+      "price_scale": 4
+    },
+    "XRP/BTC": {
+      "price_scale": 6
+    },
+    "BAC/ETH": {
       "price_scale": 4
     }
   },
@@ -15,6 +81,15 @@
       "scale": 2
     },
     "EUR": {
+      "scale": 2
+    },
+    "SEK": {
+      "scale": 2
+    },
+    "JPY": {
+      "scale": 2
+    },
+    "CNY": {
       "scale": 2
     }
   }

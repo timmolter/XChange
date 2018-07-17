@@ -6,22 +6,23 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import org.knowm.xchange.currency.CurrencyPair;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /** Data object representing an order */
 public abstract class Order implements Serializable {
 
   /** Order type i.e. bid or ask */
-  private final OrderType type;
+  private OrderType type;
   /** Amount to be ordered / amount that was ordered */
-  private final BigDecimal originalAmount;
+  private BigDecimal originalAmount;
   /** The currency pair */
-  private final CurrencyPair currencyPair;
+  private CurrencyPair currencyPair;
   /** An identifier that uniquely identifies the order */
-  private final String id;
+  private String id;
   /** The timestamp on the order according to the exchange's server, null if not provided */
-  private final Date timestamp;
+  private Date timestamp;
   /** Any applicable order flags */
-  private final Set<IOrderFlags> flags = new HashSet<>();
+  private Set<IOrderFlags> flags = new HashSet<>();
   /** Status of order during it lifecycle */
   private OrderStatus status;
   /** Amount to be ordered / amount that has been matched against order on the order book/filled */
@@ -32,6 +33,9 @@ public abstract class Order implements Serializable {
   private BigDecimal fee;
   /** The leverage to use for margin related to this order */
   private String leverage = null;
+
+  public Order() {
+  }
 
   /**
    * @param type Either BID (buying) or ASK (selling)
@@ -129,6 +133,7 @@ public abstract class Order implements Serializable {
   }
 
   /** @return The remaining order amount */
+  @JsonIgnore
   public BigDecimal getRemainingAmount() {
     if (cumulativeAmount != null && originalAmount != null) {
       return originalAmount.subtract(cumulativeAmount);
