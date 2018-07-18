@@ -103,7 +103,7 @@ public class BinanceExchange extends BaseExchange {
         for (Filter filter : symbol.getFilters()) { // replace with the new values where available.
           switch (filter.getFilterType()) {
             case "PRICE_FILTER":
-              priceScale = numberOfDecimals(filter.getTickSize());
+              priceScale = new BigDecimal(filter.getTickSize()).stripTrailingZeros().scale();
               break;
             case "LOT_SIZE":
               minAmount = new BigDecimal(filter.getMinQty());
