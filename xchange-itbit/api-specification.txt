@@ -2,6 +2,5 @@ IT Bit Exchange API specification
 ======================================
 
 
-http://api-portal.anypoint.mulesoft.com/itbit/api/itbit-exchange/docs/raml
-http://api-portal.anypoint.mulesoft.com/itbit/api/itbit-exchange/docs/code
-
+https://api.itbit.com/docs
+https://staging-api.itbit.com/docs

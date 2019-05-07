@@ -66,7 +66,7 @@ public class ItBitTradeService extends ItBitTradeServiceRaw implements TradeServ
   @Override
   public String placeMarketOrder(MarketOrder marketOrder) throws IOException {
 
-    throw new NotAvailableFromExchangeException();
+    return placeItBitMarketOrder(marketOrder).getId();
   }
 
   @Override

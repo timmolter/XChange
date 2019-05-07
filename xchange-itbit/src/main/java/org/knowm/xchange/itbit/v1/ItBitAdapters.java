@@ -66,7 +66,7 @@ public final class ItBitAdapters {
   private static DecimalFormat getCryptoFormat() {
     DecimalFormat cryptoFormat = new DecimalFormat();
     cryptoFormat.setDecimalFormatSymbols(CUSTOM_SYMBOLS);
-    cryptoFormat.setMaximumFractionDigits(4);
+    cryptoFormat.setMaximumFractionDigits(8);
     cryptoFormat.setGroupingUsed(false);
     cryptoFormat.setRoundingMode(RoundingMode.DOWN);
     return cryptoFormat;

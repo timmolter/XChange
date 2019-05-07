@@ -6,6 +6,7 @@ import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.trade.LimitOrder;
+import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.itbit.v1.ItBitAdapters;
 import org.knowm.xchange.itbit.v1.dto.ItBitException;
 import org.knowm.xchange.itbit.v1.dto.trade.ItBitOrder;
@@ -96,6 +97,30 @@ public class ItBitTradeServiceRaw extends ItBitBaseService {
 
     return postOrder;
   }
+
+  public ItBitOrder placeItBitMarketOrder(MarketOrder marketOrder) throws IOException {
+
+    String side = marketOrder.getType().equals(OrderType.BID) ? "buy" : "sell";
+    CurrencyPair exchangePair =
+            ItBitAdapters.adaptCurrencyPairToExchange(marketOrder.getCurrencyPair());
+    String funds = ItBitAdapters.formatCryptoAmount(marketOrder.getOriginalAmount());
+
+    ItBitOrder postOrder =
+        itBitAuthenticated.postOrder(
+                signatureCreator,
+                new Date().getTime(),
+                exchange.getNonceFactory(),
+                walletId,
+                new ItBitPlaceOrderRequest(
+                        side,
+                        "market",
+                        exchangePair.base.getCurrencyCode(),
+                        funds,
+                        exchangePair.base.getCurrencyCode() + exchangePair.counter.getCurrencyCode()));
+
+    return postOrder;
+  }
+
 
   public void cancelItBitOrder(String orderId) throws IOException {
 
