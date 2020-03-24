@@ -83,7 +83,7 @@ public class RippleLimitOrder extends LimitOrder {
           new RippleLimitOrder(
               orderType,
               originalAmount,
-              currencyPair,
+              (CurrencyPair) instrument,
               id,
               timestamp,
               limitPrice,

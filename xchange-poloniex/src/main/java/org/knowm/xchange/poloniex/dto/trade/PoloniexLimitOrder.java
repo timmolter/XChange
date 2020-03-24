@@ -2,6 +2,7 @@ package org.knowm.xchange.poloniex.dto.trade;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.trade.LimitOrder;
 
@@ -41,7 +42,7 @@ public class PoloniexLimitOrder extends LimitOrder {
     public PoloniexLimitOrder build() {
       final PoloniexLimitOrder order =
           new PoloniexLimitOrder(
-              orderType, originalAmount, currencyPair, id, timestamp, limitPrice);
+              orderType, originalAmount, (CurrencyPair) instrument, id, timestamp, limitPrice);
       order.setOrderFlags(flags);
       return order;
     }

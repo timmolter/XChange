@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Set;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
-import org.knowm.xchange.dto.Order.Builder;
+import org.knowm.xchange.instrument.Instrument;
 
 /**
  * DTO representing a market order
@@ -27,7 +27,7 @@ public class MarketOrder extends Order {
   /**
    * @param type Either BID (buying) or ASK (selling)
    * @param originalAmount The amount to trade
-   * @param currencyPair The identifier (e.g. BTC/USD)
+   * @param instrument The identifier (e.g. BTC/USD)
    * @param id An id (usually provided by the exchange)
    * @param timestamp a Date object representing the order's timestamp according to the exchange's
    *     server, null if not provided
@@ -39,7 +39,7 @@ public class MarketOrder extends Order {
   public MarketOrder(
       OrderType type,
       BigDecimal originalAmount,
-      CurrencyPair currencyPair,
+      Instrument instrument,
       String id,
       Date timestamp,
       BigDecimal averagePrice,
@@ -50,7 +50,7 @@ public class MarketOrder extends Order {
     super(
         type,
         originalAmount,
-        currencyPair,
+        instrument,
         id,
         timestamp,
         averagePrice,
@@ -63,7 +63,7 @@ public class MarketOrder extends Order {
   /**
    * @param type Either BID (buying) or ASK (selling)
    * @param originalAmount The amount to trade
-   * @param currencyPair The identifier (e.g. BTC/USD)
+   * @param instrument The identifier (e.g. BTC/USD)
    * @param id An id (usually provided by the exchange)
    * @param timestamp a Date object representing the order's timestamp according to the exchange's
    *     server, null if not provided
@@ -75,7 +75,7 @@ public class MarketOrder extends Order {
   public MarketOrder(
       OrderType type,
       BigDecimal originalAmount,
-      CurrencyPair currencyPair,
+      Instrument instrument,
       String id,
       Date timestamp,
       BigDecimal averagePrice,
@@ -85,7 +85,7 @@ public class MarketOrder extends Order {
     super(
         type,
         originalAmount,
-        currencyPair,
+        instrument,
         id,
         timestamp,
         averagePrice,
@@ -97,40 +97,36 @@ public class MarketOrder extends Order {
   /**
    * @param type Either BID (buying) or ASK (selling)
    * @param originalAmount The amount to trade
-   * @param currencyPair The identifier (e.g. BTC/USD)
+   * @param instrument The identifier (e.g. BTC/USD)
    * @param id An id (usually provided by the exchange)
    * @param timestamp the absolute time for this order
    */
   public MarketOrder(
-      OrderType type,
-      BigDecimal originalAmount,
-      CurrencyPair currencyPair,
-      String id,
-      Date timestamp) {
+      OrderType type, BigDecimal originalAmount, Instrument instrument, String id, Date timestamp) {
 
-    super(type, originalAmount, currencyPair, id, timestamp);
+    super(type, originalAmount, instrument, id, timestamp);
   }
 
   /**
    * @param type Either BID (buying) or ASK (selling)
    * @param originalAmount The amount to trade
-   * @param currencyPair The identifier (e.g. BTC/USD)
+   * @param instrument The identifier (e.g. BTC/USD)
    * @param timestamp the absolute time for this order
    */
   public MarketOrder(
-      OrderType type, BigDecimal originalAmount, CurrencyPair currencyPair, Date timestamp) {
+      OrderType type, BigDecimal originalAmount, Instrument instrument, Date timestamp) {
 
-    super(type, originalAmount, currencyPair, "", timestamp);
+    super(type, originalAmount, instrument, "", timestamp);
   }
 
   /**
    * @param type Either BID (buying) or ASK (selling)
    * @param originalAmount The amount to trade
-   * @param currencyPair currencyPair The identifier (e.g. BTC/USD)
+   * @param instrument The identifier (e.g. BTC/USD)
    */
-  public MarketOrder(OrderType type, BigDecimal originalAmount, CurrencyPair currencyPair) {
+  public MarketOrder(OrderType type, BigDecimal originalAmount, Instrument instrument) {
 
-    super(type, originalAmount, currencyPair, "", null);
+    super(type, originalAmount, instrument, "", null);
   }
 
   @JsonPOJOBuilder(withPrefix = "")
@@ -139,14 +135,14 @@ public class MarketOrder extends Order {
     @JsonCreator
     public Builder(
         @JsonProperty("orderType") OrderType orderType,
-        @JsonProperty("currencyPair") CurrencyPair currencyPair) {
+        @JsonProperty("instrument") Instrument instrument) {
 
-      super(orderType, currencyPair);
+      super(orderType, instrument);
     }
 
     public static Builder from(Order order) {
 
-      return new Builder(order.getType(), order.getCurrencyPair())
+      return new Builder(order.getType(), order.getInstrument())
           .originalAmount(order.getOriginalAmount())
           .cumulativeAmount(order.getCumulativeAmount())
           .timestamp(order.getTimestamp())
@@ -195,9 +191,16 @@ public class MarketOrder extends Order {
     }
 
     @Override
+    @Deprecated
     public Builder currencyPair(CurrencyPair currencyPair) {
 
       return (Builder) super.currencyPair(currencyPair);
+    }
+
+    @Override
+    public Builder instrument(Instrument instrument) {
+
+      return (Builder) super.instrument(instrument);
     }
 
     @Override
@@ -237,7 +240,7 @@ public class MarketOrder extends Order {
           new MarketOrder(
               orderType,
               originalAmount,
-              currencyPair,
+              instrument,
               id,
               timestamp,
               averagePrice,

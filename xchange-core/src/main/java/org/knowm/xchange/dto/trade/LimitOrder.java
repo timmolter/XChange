@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Set;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.instrument.Instrument;
 
 /**
  * DTO representing a limit order
@@ -29,7 +30,7 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
   /**
    * @param type Either BID (buying) or ASK (selling)
    * @param originalAmount The amount to trade
-   * @param currencyPair The identifier (e.g. BTC/USD)
+   * @param instrument The identifier (e.g. BTC/USD)
    * @param id An id (usually provided by the exchange)
    * @param timestamp a Date object representing the order's timestamp according to the exchange's
    *     server, null if not provided
@@ -39,12 +40,12 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
   public LimitOrder(
       OrderType type,
       BigDecimal originalAmount,
-      CurrencyPair currencyPair,
+      Instrument instrument,
       String id,
       Date timestamp,
       BigDecimal limitPrice) {
 
-    super(type, originalAmount, currencyPair, id, timestamp);
+    super(type, originalAmount, instrument, id, timestamp);
     this.limitPrice = limitPrice;
   }
 
@@ -52,7 +53,7 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
    * @param type Either BID (buying) or ASK (selling)
    * @param originalAmount The amount to trade
    * @param cumulativeAmount The cumulative amount
-   * @param currencyPair The identifier (e.g. BTC/USD)
+   * @param instrument The identifier (e.g. BTC/USD)
    * @param id An id (usually provided by the exchange)
    * @param timestamp a Date object representing the order's timestamp according to the exchange's
    *     server, null if not provided
@@ -63,7 +64,7 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
       OrderType type,
       BigDecimal originalAmount,
       BigDecimal cumulativeAmount,
-      CurrencyPair currencyPair,
+      Instrument instrument,
       String id,
       Date timestamp,
       BigDecimal limitPrice) {
@@ -71,7 +72,7 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
     super(
         type,
         originalAmount,
-        currencyPair,
+        instrument,
         id,
         timestamp,
         BigDecimal.ZERO,
@@ -84,7 +85,7 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
   /**
    * @param type Either BID (buying) or ASK (selling)
    * @param originalAmount The amount to trade
-   * @param currencyPair The identifier (e.g. BTC/USD)
+   * @param instrument The identifier (e.g. BTC/USD)
    * @param id An id (usually provided by the exchange)
    * @param timestamp a Date object representing the order's timestamp according to the exchange's
    *     server, null if not provided
@@ -98,7 +99,7 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
   public LimitOrder(
       OrderType type,
       BigDecimal originalAmount,
-      CurrencyPair currencyPair,
+      Instrument instrument,
       String id,
       Date timestamp,
       BigDecimal limitPrice,
@@ -110,7 +111,7 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
     super(
         type,
         originalAmount,
-        currencyPair,
+        instrument,
         id,
         timestamp,
         averagePrice,
@@ -123,7 +124,7 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
   /**
    * @param type Either BID (buying) or ASK (selling)
    * @param originalAmount The amount to trade
-   * @param currencyPair The identifier (e.g. BTC/USD)
+   * @param instrument The identifier (e.g. BTC/USD)
    * @param id An id (usually provided by the exchange)
    * @param timestamp a Date object representing the order's timestamp according to the exchange's
    *     server, null if not provided
@@ -137,7 +138,7 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
   public LimitOrder(
       OrderType type,
       BigDecimal originalAmount,
-      CurrencyPair currencyPair,
+      Instrument instrument,
       String id,
       Date timestamp,
       BigDecimal limitPrice,
@@ -150,7 +151,7 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
     super(
         type,
         originalAmount,
-        currencyPair,
+        instrument,
         id,
         timestamp,
         averagePrice,
@@ -229,9 +230,9 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
     @JsonCreator
     public Builder(
         @JsonProperty("orderType") OrderType orderType,
-        @JsonProperty("currencyPair") CurrencyPair currencyPair) {
+        @JsonProperty("instrument") Instrument instrument) {
 
-      super(orderType, currencyPair);
+      super(orderType, instrument);
     }
 
     public static Builder from(Order order) {
@@ -279,9 +280,16 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
     }
 
     @Override
+    @Deprecated
     public Builder currencyPair(CurrencyPair currencyPair) {
 
       return (Builder) super.currencyPair(currencyPair);
+    }
+
+    @Override
+    public Builder instrument(Instrument instrument) {
+
+      return (Builder) super.instrument(instrument);
     }
 
     @Override
@@ -344,7 +352,7 @@ public class LimitOrder extends Order implements Comparable<LimitOrder> {
           new LimitOrder(
               orderType,
               originalAmount,
-              currencyPair,
+              instrument,
               id,
               timestamp,
               limitPrice,

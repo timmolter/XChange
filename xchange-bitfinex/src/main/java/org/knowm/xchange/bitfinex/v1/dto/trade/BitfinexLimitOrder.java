@@ -61,7 +61,7 @@ public class BitfinexLimitOrder extends LimitOrder {
     public BitfinexLimitOrder build() {
       final BitfinexLimitOrder order =
           new BitfinexLimitOrder(
-              orderType, originalAmount, currencyPair, id, timestamp, limitPrice);
+              orderType, originalAmount, (CurrencyPair) instrument, id, timestamp, limitPrice);
       order.setOrderFlags(flags);
       return order;
     }
