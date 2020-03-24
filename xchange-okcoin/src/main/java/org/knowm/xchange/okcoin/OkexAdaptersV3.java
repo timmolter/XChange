@@ -1,5 +1,8 @@
 package org.knowm.xchange.okcoin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
@@ -8,13 +11,18 @@ import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.FundingRecord.Status;
 import org.knowm.xchange.dto.account.FundingRecord.Type;
 import org.knowm.xchange.dto.marketdata.Ticker;
+import org.knowm.xchange.dto.marketdata.Trade;
+import org.knowm.xchange.dto.marketdata.Trades;
+import org.knowm.xchange.dto.marketdata.Trades.TradeSortType;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.okcoin.v3.dto.account.OkexDepositRecord;
 import org.knowm.xchange.okcoin.v3.dto.account.OkexFundingAccountRecord;
 import org.knowm.xchange.okcoin.v3.dto.account.OkexSpotAccountRecord;
 import org.knowm.xchange.okcoin.v3.dto.account.OkexWithdrawalRecord;
+import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexFuturesTrade;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSpotTicker;
+import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexTrade;
 import org.knowm.xchange.okcoin.v3.dto.trade.FuturesAccountsResponse.FuturesAccount;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexOpenOrder;
 import org.knowm.xchange.okcoin.v3.dto.trade.Side;
@@ -58,6 +66,16 @@ public class OkexAdaptersV3 {
     return pair == null ? null : pair.base.getCurrencyCode() + "-" + pair.counter.getCurrencyCode();
   }
 
+  public static String toFuturesInstrument(FuturesContractV3 futuresContract) {
+    return futuresContract == null
+        ? null
+        : futuresContract.underlier.base.getCurrencyCode()
+            + "-"
+            + futuresContract.underlier.counter.getCurrencyCode()
+            + "-"
+            + futuresContract.prompt;
+  }
+
   /**
    * there are different types of instruments: spot (ie 'ETH-BTC'), future (ie 'BCH-USD-190927'),
    * swap (ie 'ETH-USD-SWAP')
@@ -71,6 +89,21 @@ public class OkexAdaptersV3 {
       throw new ExchangeException("Not supported instrument: " + instrument);
     }
     return new CurrencyPair(split[0], split[1]);
+  }
+
+  /**
+   * there are different types of instruments: spot (ie 'ETH-BTC'), future (ie 'BCH-USD-190927'),
+   * swap (ie 'ETH-USD-SWAP')
+   *
+   * @param instrument
+   * @return
+   */
+  public static FuturesContractV3 toFutures(String instrument) {
+    String[] split = instrument.split("-");
+    if (split == null || split.length < 3) {
+      throw new ExchangeException("Not supported instrument: " + instrument);
+    }
+    return new FuturesContractV3(new CurrencyPair(split[0], split[1]), split[2]);
   }
 
   public static Ticker convert(OkexSpotTicker i) {
@@ -158,5 +191,51 @@ public class OkexAdaptersV3 {
       default:
         throw new ExchangeException("Unknown deposit status: " + status);
     }
+  }
+
+  public static Trades adaptTrades(OkexTrade[] trades, CurrencyPair currencyPair) {
+
+    List<Trade> tradeList = new ArrayList<>(trades.length);
+    for (OkexTrade trade : trades) {
+      tradeList.add(adaptTrade(trade, currencyPair));
+    }
+    long lastTid = trades.length > 0 ? (trades[trades.length - 1].getTradeId()) : 0L;
+    return new Trades(tradeList, lastTid, TradeSortType.SortByTimestamp);
+  }
+
+  public static Trades adaptFuturesTrades(
+      OkexFuturesTrade[] trades, FuturesContractV3 futuresContract) {
+
+    List<Trade> tradeList = new ArrayList<>(trades.length);
+    for (OkexFuturesTrade trade : trades) {
+      tradeList.add(adaptFuturesTrade(trade, futuresContract));
+    }
+    long lastTid = trades.length > 0 ? (trades[trades.length - 1].getTradeId()) : 0L;
+    return new Trades(tradeList, lastTid, TradeSortType.SortByTimestamp);
+  }
+
+  private static Trade adaptFuturesTrade(
+      OkexFuturesTrade trade, FuturesContractV3 futuresContract) {
+
+    return new Trade.Builder()
+        .type(trade.getSide().equals("buy") ? OrderType.BID : OrderType.ASK)
+        .originalAmount(trade.getQty())
+        .currencyPair(futuresContract.underlier)
+        .price(trade.getPrice())
+        .timestamp(trade.getDate())
+        .id("" + trade.getTradeId())
+        .build();
+  }
+
+  private static Trade adaptTrade(OkexTrade trade, CurrencyPair currencyPair) {
+
+    return new Trade.Builder()
+        .type(trade.getSide().equals("buy") ? OrderType.BID : OrderType.ASK)
+        .originalAmount(trade.getSize())
+        .currencyPair(currencyPair)
+        .price(trade.getPrice())
+        .timestamp(trade.getDate())
+        .id("" + trade.getTradeId())
+        .build();
   }
 }

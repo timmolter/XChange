@@ -4,29 +4,21 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
-import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.Trades.TradeSortType;
 import org.knowm.xchange.dto.trade.LimitOrder;
-import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
 import org.knowm.xchange.dto.trade.UserTrade;
 import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
-import org.knowm.xchange.okcoin.FuturesContract;
-import org.knowm.xchange.okcoin.OkCoinAdapters;
 import org.knowm.xchange.okcoin.OkexAdaptersV3;
 import org.knowm.xchange.okcoin.OkexExchangeV3;
-import org.knowm.xchange.okcoin.dto.trade.OkCoinPriceLimit;
-import org.knowm.xchange.okcoin.service.OkCoinFuturesTradeService.OkCoinFuturesOrderQueryParams;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexOpenOrder;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexOrderFlags;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexTradeHistoryParams;
@@ -47,12 +39,12 @@ import org.knowm.xchange.service.trade.params.orders.DefaultOpenOrdersParamCurre
 import org.knowm.xchange.service.trade.params.orders.OpenOrdersParamCurrencyPair;
 import org.knowm.xchange.service.trade.params.orders.OpenOrdersParams;
 
-public class OkexTradeService extends OkexTradeServiceRaw implements TradeService {
+public class OkexFuturesTradeService extends OkexTradeServiceRaw implements TradeService {
 
   private static final int orders_limit = 100;
   private static final int transactions_limit = 100;
 
-  public OkexTradeService(OkexExchangeV3 exchange) {
+  public OkexFuturesTradeService(OkexExchangeV3 exchange) {
     super(exchange);
   }
 
@@ -76,40 +68,6 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
             .build();
     OrderPlacementResponse placed = spotPlaceOrder(req);
     return placed.getOrderId();
-  }
-
-  public OkCoinPriceLimit getFuturesPriceLimits(CurrencyPair currencyPair, FuturesContract prompt)
-      throws IOException {
-
-    return okCoin.getFuturesPriceLimits(OkCoinAdapters.adaptSymbol(currencyPair), prompt.getName());
-  }
-
-  /** Retrieves the max price from the okex imposed by the price limits */
-  public OkCoinPriceLimit getPriceLimits(CurrencyPair currencyPair, Object... args)
-      throws IOException {
-    if (args != null && args.length > 0)
-      return getFuturesPriceLimits(currencyPair, (FuturesContract) args[0]);
-    else return getFuturesPriceLimits(currencyPair, futuresContract);
-  }
-
-  @Override
-  public String placeMarketOrder(MarketOrder mo) throws IOException {
-    long orderId;
-    if (marketOrder.getType() == OrderType.BID || marketOrder.getType() == OrderType.ASK) {
-      orderId =
-          futuresTrade(
-                  OkCoinAdapters.adaptSymbol(marketOrder.getCurrencyPair()),
-                  marketOrder.getType() == OrderType.BID ? "1" : "2",
-                  "0",
-                  marketOrder.getOriginalAmount().toPlainString(),
-                  futuresContract,
-                  1,
-                  leverRate)
-              .getOrderId();
-      return String.valueOf(orderId);
-    } else {
-      return liquidateMarketOrder(marketOrder);
-    }
   }
 
   public String placeMarginLimitOrder(LimitOrder o) throws IOException {
@@ -160,19 +118,6 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
   @Override
   public OpenOrders getOpenOrders() throws IOException {
     throw new NotAvailableFromExchangeException();
-  }
-
-  @Override
-  public Collection<Order> getOrder(String... orderIds) throws IOException {
-    List<OkCoinFuturesOrderQueryParams> params = new ArrayList<OkCoinFuturesOrderQueryParams>();
-
-    for (CurrencyPair symbol : exchange.getExchangeSymbols()) {
-      for (String orderId : orderIds) {
-        params.add(new OkCoinFuturesOrderQueryParams(symbol, futuresContract, orderId));
-      }
-    }
-
-    return getOrder(params.toArray(new OkCoinFuturesOrderQueryParams[params.size()]));
   }
 
   @Override
@@ -246,8 +191,7 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
     allOrdersWithTrades.forEach(
         o -> {
           try {
-            fetchTradesForOrder(o)
-                .stream()
+            fetchTradesForOrder(o).stream()
                 .filter(
                     t ->
                         Side.buy
@@ -327,8 +271,7 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
     allOrdersWithTrades.forEach(
         o -> {
           try {
-            fetchMarginTradesForOrder(o)
-                .stream()
+            fetchMarginTradesForOrder(o).stream()
                 .filter(
                     t ->
                         Side.buy
