@@ -4,12 +4,14 @@ import java.io.Serializable;
 
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.instrument.Instrument;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /** Delivery dates for future date currencies */
-public class FuturesContractV3 implements Comparable<FuturesContractV3>, Serializable {
+public class FuturesContractV3 extends Instrument
+    implements Comparable<FuturesContractV3>, Serializable {
   /** */
   private static final long serialVersionUID = -8400518639933611025L;
 

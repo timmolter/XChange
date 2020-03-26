@@ -22,11 +22,13 @@ import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.okcoin.FuturesContract;
+import org.knowm.xchange.okcoin.FuturesContractV3;
 import org.knowm.xchange.okcoin.OkCoinAdapters;
 import org.knowm.xchange.okcoin.OkexAdaptersV3;
 import org.knowm.xchange.okcoin.OkexExchangeV3;
 import org.knowm.xchange.okcoin.dto.trade.OkCoinPriceLimit;
 import org.knowm.xchange.okcoin.service.OkCoinFuturesTradeService.OkCoinFuturesOrderQueryParams;
+import org.knowm.xchange.okcoin.v3.dto.trade.FuturesOrderPlacementRequest;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexOpenOrder;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexOrderFlags;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexTradeHistoryParams;
@@ -94,33 +96,47 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
 
   @Override
   public String placeMarketOrder(MarketOrder mo) throws IOException {
-    long orderId;
-    if (marketOrder.getType() == OrderType.BID || marketOrder.getType() == OrderType.ASK) {
-      orderId =
-          futuresTrade(
-                  OkCoinAdapters.adaptSymbol(marketOrder.getCurrencyPair()),
-                  marketOrder.getType() == OrderType.BID ? "1" : "2",
-                  "0",
-                  marketOrder.getOriginalAmount().toPlainString(),
-                  futuresContract,
-                  1,
-                  leverRate)
-              .getOrderId();
-      return String.valueOf(orderId);
-    } else {
-      return liquidateMarketOrder(marketOrder);
+    // 0: Normal limit order (Unfilled and 0 represent normal limit order) 1: Post only 2: Fill Or
+    // Kill 3: Immediatel Or Cancel
+    OrderPlacementType orderType =
+        mo.hasFlag(OkexOrderFlags.POST_ONLY)
+            ? OrderPlacementType.post_only
+            : OrderPlacementType.normal;
+    SpotOrderPlacementRequest req = null;
+    switch (mo.getType()) {
+      case ASK:
+        req =
+            SpotOrderPlacementRequest.builder()
+                .instrumentId(OkexAdaptersV3.toSpotInstrument(mo.getCurrencyPair()))
+                .size(mo.getOriginalAmount())
+                .side(Side.sell)
+                .orderType(orderType)
+                .build();
+      case BID:
+        req =
+            SpotOrderPlacementRequest.builder()
+                .instrumentId(OkexAdaptersV3.toSpotInstrument(mo.getCurrencyPair()))
+                .notional(mo.getOriginalAmount())
+                .side(Side.sell)
+                .orderType(orderType)
+                .build();
     }
+    if (req == null) return null;
+    OrderPlacementResponse placed = spotPlaceOrder(req);
+    return placed.getOrderId();
   }
 
   public String placeMarginLimitOrder(LimitOrder o) throws IOException {
-
+    if (!(o.getInstrument() instanceof CurrencyPair)) {
+      throw new IllegalStateException(
+          "The instrument of this order is not a currency pair: " + o.getInstrument());
+    }
     // 0: Normal limit order (Unfilled and 0 represent normal limit order) 1: Post only 2: Fill Or
     // Kill 3: Immediatel Or Cancel
     OrderPlacementType orderType =
         o.hasFlag(OkexOrderFlags.POST_ONLY)
             ? OrderPlacementType.post_only
             : OrderPlacementType.normal;
-
     SpotOrderPlacementRequest req =
         SpotOrderPlacementRequest.builder()
             .instrumentId(OkexAdaptersV3.toSpotInstrument(o.getCurrencyPair()))
@@ -130,6 +146,30 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
             .orderType(orderType)
             .build();
     OrderPlacementResponse placed = marginPlaceOrder(req);
+    return placed.getOrderId();
+  }
+
+  public String placeFuturesLimitOrder(LimitOrder o) throws IOException {
+    if (!(o.getInstrument() instanceof FuturesContractV3)) {
+      throw new IllegalStateException(
+          "The instrument of this order is not a future: " + o.getInstrument());
+    }
+    // 0: Normal limit order (Unfilled and 0 represent normal limit order) 1: Post only 2: Fill Or
+    // Kill 3: Immediatel Or Cancel
+    OrderPlacementType orderType =
+        o.hasFlag(OkexOrderFlags.POST_ONLY)
+            ? OrderPlacementType.post_only
+            : OrderPlacementType.normal;
+
+    FuturesOrderPlacementRequest req =
+        FuturesOrderPlacementRequest.builder()
+            .instrumentId(OkexAdaptersV3.toFuturesInstrument((FuturesContractV3) o.getInstrument()))
+            .price(o.getLimitPrice())
+            .size(o.getOriginalAmount())
+            .type(OkexAdaptersV3.adaptFuturesSwapType(o.getType()))
+            .orderType(orderType)
+            .build();
+    OrderPlacementResponse placed = futuresPlaceOrder(req);
     return placed.getOrderId();
   }
 

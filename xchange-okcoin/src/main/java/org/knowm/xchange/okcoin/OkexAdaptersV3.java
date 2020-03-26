@@ -24,6 +24,7 @@ import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexFuturesTrade;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSpotTicker;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexTrade;
 import org.knowm.xchange.okcoin.v3.dto.trade.FuturesAccountsResponse.FuturesAccount;
+import org.knowm.xchange.okcoin.v3.dto.trade.FuturesSwapType;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexOpenOrder;
 import org.knowm.xchange.okcoin.v3.dto.trade.Side;
 import org.knowm.xchange.okcoin.v3.dto.trade.SwapAccountsResponse.SwapAccountInfo;
@@ -237,5 +238,21 @@ public class OkexAdaptersV3 {
         .timestamp(trade.getDate())
         .id("" + trade.getTradeId())
         .build();
+  }
+
+  public static FuturesSwapType adaptFuturesSwapType(OrderType orderType) {
+
+    switch (orderType) {
+      case BID:
+        return FuturesSwapType.open_long;
+      case ASK:
+        return FuturesSwapType.open_short;
+      case EXIT_ASK:
+        return FuturesSwapType.close_short;
+      case EXIT_BID:
+        return FuturesSwapType.close_long;
+      default:
+        return null;
+    }
   }
 }
