@@ -3,7 +3,6 @@ package org.knowm.xchange.okcoin;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -13,7 +12,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
 import org.knowm.xchange.okcoin.v3.dto.account.FuturesLeverageResponse;
 import org.knowm.xchange.okcoin.v3.dto.account.MarginAccountResponse;
 import org.knowm.xchange.okcoin.v3.dto.account.MarginAccountSettingsRecord;
@@ -46,9 +44,12 @@ import org.knowm.xchange.okcoin.v3.dto.trade.MarginBorrowResponse;
 import org.knowm.xchange.okcoin.v3.dto.trade.MarginRepaymentRequest;
 import org.knowm.xchange.okcoin.v3.dto.trade.MarginRepaymentResponse;
 import org.knowm.xchange.okcoin.v3.dto.trade.MarginSetLeverageRequest;
+import org.knowm.xchange.okcoin.v3.dto.trade.OkexFuturePriceLimit;
+import org.knowm.xchange.okcoin.v3.dto.trade.OkexFuturesOpenOrder;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexFuturesTransaction;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexOpenOrder;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexResponse;
+import org.knowm.xchange.okcoin.v3.dto.trade.OkexSwapOpenOrder;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexSwapTransaction;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexTransaction;
 import org.knowm.xchange.okcoin.v3.dto.trade.OrderBatchCancellationRequest;
@@ -65,7 +66,6 @@ import org.knowm.xchange.okcoin.v3.dto.trade.SwapOrderBatchCancellationRequest;
 import org.knowm.xchange.okcoin.v3.dto.trade.SwapOrderPlacementRequest;
 import org.knowm.xchange.okcoin.v3.dto.trade.SwapPositionsEntry;
 import org.knowm.xchange.okcoin.v3.service.OkexException;
-
 import si.mazi.rescu.ParamsDigest;
 
 @Path("/api")
@@ -203,6 +203,25 @@ public interface OkexV3 {
 
   /**
    * @param instrumentId [required] list the orders of specific trading pairs
+   * @param orderId [required] id of order to be retrived page after this id (latest information)
+   *     (eg. 1, 2, 3, 4, 5. There is only a 5 "from 4", while there are 1, 2, 3 "to 4")
+   * @return
+   * @throws IOException
+   * @throws OkexException
+   */
+  @GET
+  @Path("/spot/v3/orders/{instrument_id}/{order_id}")
+  OkexOpenOrder getSpotOrder(
+      @HeaderParam(OK_ACCESS_KEY) String apiKey,
+      @HeaderParam(OK_ACCESS_SIGN) ParamsDigest signature,
+      @HeaderParam(OK_ACCESS_TIMESTAMP) String timestamp,
+      @HeaderParam(OK_ACCESS_PASSPHRASE) String passphrase,
+      @PathParam("instrument_id") String instrumentId,
+      @PathParam("order_id") String orderId)
+      throws IOException, OkexException;
+
+  /**
+   * @param instrumentId [required] list the orders of specific trading pairs
    * @param from [optional] request page after this id (latest information) (eg. 1, 2, 3, 4, 5.
    *     There is only a 5 "from 4", while there are 1, 2, 3 "to 4")
    * @param to [optional] request page after (newer) this id.
@@ -295,6 +314,11 @@ public interface OkexV3 {
       throws IOException;
 
   @GET
+  @Path("/futures/v3/instruments/{instrument_id}/price_limit")
+  OkexFuturePriceLimit getFuturesPriceLimit(@PathParam("instrument_id") String instrumentId)
+      throws IOException;
+
+  @GET
   @Path("/futures/v3/instruments/{instrument_id}/book")
   OkexDepth getFuturesDepth(
       @PathParam("instrument_id") String instrumentId, @QueryParam("size") Integer size)
@@ -336,6 +360,25 @@ public interface OkexV3 {
       @HeaderParam(OK_ACCESS_TIMESTAMP) String timestamp,
       @HeaderParam(OK_ACCESS_PASSPHRASE) String passphrase,
       @PathParam("currency") String currency)
+      throws IOException, OkexException;
+
+  /**
+   * @param instrumentId [required] list the orders of specific trading pairs
+   * @param orderId [required] id of order to be retrived page after this id (latest information)
+   *     (eg. 1, 2, 3, 4, 5. There is only a 5 "from 4", while there are 1, 2, 3 "to 4")
+   * @return
+   * @throws IOException
+   * @throws OkexException
+   */
+  @GET
+  @Path("/futures/v3/orders/{instrument_id}/{order_id}")
+  OkexFuturesOpenOrder getFuturesOrder(
+      @HeaderParam(OK_ACCESS_KEY) String apiKey,
+      @HeaderParam(OK_ACCESS_SIGN) ParamsDigest signature,
+      @HeaderParam(OK_ACCESS_TIMESTAMP) String timestamp,
+      @HeaderParam(OK_ACCESS_PASSPHRASE) String passphrase,
+      @PathParam("instrument_id") String instrumentId,
+      @PathParam("order_id") String orderId)
       throws IOException, OkexException;
 
   /**
@@ -434,6 +477,25 @@ public interface OkexV3 {
   @GET
   @Path("/swap/v3/instruments/ticker")
   List<OkexSwapTicker> getAllSwapTickers() throws IOException, OkexException;
+
+  /**
+   * @param instrumentId [required] list the orders of specific trading pairs
+   * @param orderId [required] id of order to be retrived page after this id (latest information)
+   *     (eg. 1, 2, 3, 4, 5. There is only a 5 "from 4", while there are 1, 2, 3 "to 4")
+   * @return
+   * @throws IOException
+   * @throws OkexException
+   */
+  @GET
+  @Path("/swap/v3/orders/{instrument_id}/{order_id}")
+  OkexSwapOpenOrder getSwapOrder(
+      @HeaderParam(OK_ACCESS_KEY) String apiKey,
+      @HeaderParam(OK_ACCESS_SIGN) ParamsDigest signature,
+      @HeaderParam(OK_ACCESS_TIMESTAMP) String timestamp,
+      @HeaderParam(OK_ACCESS_PASSPHRASE) String passphrase,
+      @PathParam("instrument_id") String instrumentId,
+      @PathParam("order_id") String orderId)
+      throws IOException, OkexException;
 
   /**
    * @param instrumentId

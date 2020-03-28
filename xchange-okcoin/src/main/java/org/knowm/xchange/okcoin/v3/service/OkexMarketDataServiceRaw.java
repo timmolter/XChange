@@ -2,7 +2,6 @@ package org.knowm.xchange.okcoin.v3.service;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.knowm.xchange.okcoin.OkexExchangeV3;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexDepth;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexFutureInstrument;

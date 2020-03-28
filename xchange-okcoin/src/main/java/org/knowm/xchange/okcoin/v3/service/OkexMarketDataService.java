@@ -3,14 +3,13 @@ package org.knowm.xchange.okcoin.v3.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.dto.trade.LimitOrder;
-import org.knowm.xchange.okcoin.FuturesContractV3;
+import org.knowm.xchange.instrument.FuturesContract;
 import org.knowm.xchange.okcoin.OkexAdaptersV3;
 import org.knowm.xchange.okcoin.OkexExchangeV3;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexDepth;
@@ -35,8 +34,7 @@ public class OkexMarketDataService extends OkexMarketDataServiceRaw implements M
 
   @Override
   public List<Ticker> getTickers(Params params) throws IOException {
-    return okex.getAllSpotTickers()
-        .stream()
+    return okex.getAllSpotTickers().stream()
         .map(OkexAdaptersV3::convert)
         .collect(Collectors.toList());
   }
@@ -53,7 +51,7 @@ public class OkexMarketDataService extends OkexMarketDataServiceRaw implements M
         trades = getTrades(OkexAdaptersV3.toSpotInstrument(currencyPair), (Long) args[0]);
         return OkexAdaptersV3.adaptTrades(trades, currencyPair);
       } else {
-        FuturesContractV3 futuresContract = new FuturesContractV3(currencyPair, (String) args[0]);
+        FuturesContract futuresContract = new FuturesContract(currencyPair, (String) args[0]);
         Object[] newArgs = new Object[args.length - 1];
         System.arraycopy(args, 1, newArgs, 0, args.length - 1);
         OkexFuturesTrade[] futuresTrades =
@@ -76,7 +74,7 @@ public class OkexMarketDataService extends OkexMarketDataServiceRaw implements M
         okexDepth = getDepth(OkexAdaptersV3.toSpotInstrument(currencyPair), (Integer) args[0]);
 
       } else {
-        FuturesContractV3 futuresContract = new FuturesContractV3(currencyPair, (String) args[0]);
+        FuturesContract futuresContract = new FuturesContract(currencyPair, (String) args[0]);
         Object[] newArgs = new Object[args.length - 1];
         System.arraycopy(args, 1, newArgs, 0, args.length - 1);
         okexDepth = getFuturesDepth(OkexAdaptersV3.toFuturesInstrument(futuresContract));
@@ -88,15 +86,11 @@ public class OkexMarketDataService extends OkexMarketDataServiceRaw implements M
 
   public static OrderBook convertOrderBook(OkexDepth ob, CurrencyPair pair) {
     List<LimitOrder> bids =
-        ob.bids
-            .entrySet()
-            .stream()
+        ob.bids.entrySet().stream()
             .map(e -> new LimitOrder(OrderType.BID, e.getValue(), pair, null, null, e.getKey()))
             .collect(Collectors.toList());
     List<LimitOrder> asks =
-        ob.asks
-            .entrySet()
-            .stream()
+        ob.asks.entrySet().stream()
             .map(e -> new LimitOrder(OrderType.ASK, e.getValue(), pair, null, null, e.getKey()))
             .collect(Collectors.toList());
     return new OrderBook(ob.getTimestamp(), asks, bids);

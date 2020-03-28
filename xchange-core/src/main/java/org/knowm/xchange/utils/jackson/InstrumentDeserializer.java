@@ -1,15 +1,13 @@
 package org.knowm.xchange.utils.jackson;
 
-import java.io.IOException;
-
-import org.knowm.xchange.currency.CurrencyPair;
-import org.knowm.xchange.instrument.Instrument;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.instrument.Instrument;
 
 public class InstrumentDeserializer extends JsonDeserializer<Instrument> {
 

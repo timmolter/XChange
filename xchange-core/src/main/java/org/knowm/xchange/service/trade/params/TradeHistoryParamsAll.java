@@ -1,9 +1,11 @@
 package org.knowm.xchange.service.trade.params;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.trade.TradeService;
 
 /**
@@ -18,7 +20,9 @@ public class TradeHistoryParamsAll
         TradeHistoryParamsIdSpan,
         TradeHistoryParamOffset,
         TradeHistoryParamCurrencyPair,
+        TradeHistoryParamInstrument,
         TradeHistoryParamMultiCurrencyPair,
+        TradeHistoryParamMultiInstrument,
         TradeHistoryParamLimit {
 
   private Integer pageLength;
@@ -28,8 +32,8 @@ public class TradeHistoryParamsAll
   private Date startTime;
   private Date endTime;
   private Long offset;
-  private CurrencyPair pair;
-  private Collection<CurrencyPair> pairs = Collections.emptySet();
+  private Instrument instrument;
+  private Collection<Instrument> instruments = Collections.emptySet();
   private Integer limit;
 
   @Override
@@ -118,27 +122,76 @@ public class TradeHistoryParamsAll
   }
 
   @Override
-  public CurrencyPair getCurrencyPair() {
-
-    return pair;
+  public Instrument getInstrument() {
+    return instrument;
   }
 
+  @Override
+  public void setInstrument(Instrument instrument) {
+
+    this.instrument = instrument;
+  }
+
+  @Override
+  public Collection<Instrument> getInstruments() {
+    return instruments;
+  }
+
+  @Override
+  public void setInstruments(Collection<Instrument> value) {
+    instruments = value;
+  }
+
+  /**
+   * @deprecated CurrencyPair is a subtype of Instrument - this method will throw an exception if
+   *     the instrument is not a CurrencyPair
+   *     <p>use {@link #getInstrument()} instead
+   */
+  @Override
+  @Deprecated
+  public CurrencyPair getCurrencyPair() {
+    if (!(instrument instanceof CurrencyPair)) {
+      throw new IllegalStateException(
+          "The instrument of this order is not a currency pair: " + instrument);
+    }
+    return (CurrencyPair) instrument;
+  }
+
+  /**
+   * @deprecated CurrencyPair is a subtype of Instrument - this method will return an empty
+   *     collection if none of the instruments are a CurrencyPair
+   *     <p>use {@link #getInstruments()} instead
+   */
+  @Deprecated
   @Override
   public void setCurrencyPair(CurrencyPair pair) {
 
-    this.pair = pair;
+    this.instrument = pair;
   }
 
+  /**
+   * @deprecated CurrencyPair is a subtype of Instrument - this method will return an empty
+   *     collection if none of the instruments are a CurrencyPair
+   *     <p>use {@link #getInstruments()} instead
+   */
   @Override
+  @Deprecated
   public Collection<CurrencyPair> getCurrencyPairs() {
-
-    return pairs;
+    ArrayList<CurrencyPair> paris = new ArrayList<CurrencyPair>();
+    for (Instrument instrument : instruments)
+      if ((instrument instanceof CurrencyPair)) {
+        paris.add((CurrencyPair) instrument);
+      }
+    return paris;
   }
-
+  /**
+   * @deprecated CurrencyPair is a subtype of Instrument
+   *     <p>use {@link #setInstruments()} instead
+   */
   @Override
+  @Deprecated
   public void setCurrencyPairs(Collection<CurrencyPair> value) {
-
-    pairs = value;
+    instruments = (Collection<Instrument>) (Collection<?>) value;
   }
 
   @Override

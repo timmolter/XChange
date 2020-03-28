@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
@@ -21,14 +20,14 @@ import org.knowm.xchange.dto.trade.UserTrade;
 import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
-import org.knowm.xchange.okcoin.FuturesContract;
-import org.knowm.xchange.okcoin.FuturesContractV3;
-import org.knowm.xchange.okcoin.OkCoinAdapters;
+import org.knowm.xchange.instrument.FuturesContract;
+import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.okcoin.OkexAdaptersV3;
 import org.knowm.xchange.okcoin.OkexExchangeV3;
-import org.knowm.xchange.okcoin.dto.trade.OkCoinPriceLimit;
-import org.knowm.xchange.okcoin.service.OkCoinFuturesTradeService.OkCoinFuturesOrderQueryParams;
 import org.knowm.xchange.okcoin.v3.dto.trade.FuturesOrderPlacementRequest;
+import org.knowm.xchange.okcoin.v3.dto.trade.FuturesSwapMatchPrice;
+import org.knowm.xchange.okcoin.v3.dto.trade.OkexFuturePriceLimit;
+import org.knowm.xchange.okcoin.v3.dto.trade.OkexFuturesOpenOrder;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexOpenOrder;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexOrderFlags;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexTradeHistoryParams;
@@ -40,14 +39,17 @@ import org.knowm.xchange.okcoin.v3.dto.trade.OrderPlacementType;
 import org.knowm.xchange.okcoin.v3.dto.trade.Side;
 import org.knowm.xchange.okcoin.v3.dto.trade.SpotOrderPlacementRequest;
 import org.knowm.xchange.service.trade.TradeService;
-import org.knowm.xchange.service.trade.params.CancelOrderByCurrencyPair;
 import org.knowm.xchange.service.trade.params.CancelOrderByIdParams;
+import org.knowm.xchange.service.trade.params.CancelOrderByInstrument;
 import org.knowm.xchange.service.trade.params.CancelOrderParams;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamCurrencyPair;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 import org.knowm.xchange.service.trade.params.orders.DefaultOpenOrdersParamCurrencyPair;
-import org.knowm.xchange.service.trade.params.orders.OpenOrdersParamCurrencyPair;
+import org.knowm.xchange.service.trade.params.orders.DefaultQueryOrderParam;
+import org.knowm.xchange.service.trade.params.orders.OpenOrdersParamInstrument;
 import org.knowm.xchange.service.trade.params.orders.OpenOrdersParams;
+import org.knowm.xchange.service.trade.params.orders.OrderQueryParamInstrument;
+import org.knowm.xchange.service.trade.params.orders.OrderQueryParams;
 
 public class OkexTradeService extends OkexTradeServiceRaw implements TradeService {
 
@@ -60,6 +62,11 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
 
   @Override
   public String placeLimitOrder(LimitOrder o) throws IOException {
+    if (o.getInstrument() instanceof CurrencyPair) return placeSpotLimitOrder(o);
+    else return placeFuturesLimitOrder(o);
+  }
+
+  public String placeSpotLimitOrder(LimitOrder o) throws IOException {
 
     // 0: Normal limit order (Unfilled and 0 represent normal limit order) 1: Post only 2: Fill Or
     // Kill 3: Immediatel Or Cancel
@@ -80,22 +87,22 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
     return placed.getOrderId();
   }
 
-  public OkCoinPriceLimit getFuturesPriceLimits(CurrencyPair currencyPair, FuturesContract prompt)
-      throws IOException {
-
-    return okCoin.getFuturesPriceLimits(OkCoinAdapters.adaptSymbol(currencyPair), prompt.getName());
-  }
-
   /** Retrieves the max price from the okex imposed by the price limits */
-  public OkCoinPriceLimit getPriceLimits(CurrencyPair currencyPair, Object... args)
+  public OkexFuturePriceLimit getPriceLimits(Instrument instrument, Object... args)
       throws IOException {
-    if (args != null && args.length > 0)
-      return getFuturesPriceLimits(currencyPair, (FuturesContract) args[0]);
-    else return getFuturesPriceLimits(currencyPair, futuresContract);
+    if (!(instrument instanceof FuturesContract))
+      throw new IllegalStateException(
+          "The instrument of request is not a futures contract: " + instrument);
+    return getFuturesPriceLimits((FuturesContract) instrument);
   }
 
   @Override
   public String placeMarketOrder(MarketOrder mo) throws IOException {
+    if (mo.getInstrument() instanceof CurrencyPair) return placeSpotMarketOrder(mo);
+    else return placeFuturesMarketOrder(mo);
+  }
+
+  public String placeSpotMarketOrder(MarketOrder mo) throws IOException {
     // 0: Normal limit order (Unfilled and 0 represent normal limit order) 1: Post only 2: Fill Or
     // Kill 3: Immediatel Or Cancel
     OrderPlacementType orderType =
@@ -126,6 +133,35 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
     return placed.getOrderId();
   }
 
+  public String placeFuturesMarketOrder(MarketOrder mo) throws IOException {
+    if (!(mo.getInstrument() instanceof FuturesContract)) {
+      throw new IllegalStateException(
+          "The instrument of this order is not a future: " + mo.getInstrument());
+    }
+    // 0: Normal limit order (Unfilled and 0 represent normal limit order) 1: Post only 2: Fill Or
+    // Kill 3: Immediatel Or Cancel
+    OrderPlacementType orderType =
+        mo.hasFlag(OkexOrderFlags.POST_ONLY)
+            ? OrderPlacementType.post_only
+            : OrderPlacementType.normal;
+
+    FuturesOrderPlacementRequest req =
+        FuturesOrderPlacementRequest.builder()
+            .instrumentId(OkexAdaptersV3.toFuturesInstrument((FuturesContract) mo.getInstrument()))
+            .price(
+                mo.getType() == OrderType.BID || mo.getType() == OrderType.EXIT_ASK
+                    ? BigDecimal.ZERO
+                    : BigDecimal.valueOf(Long.MAX_VALUE))
+            .size(mo.getOriginalAmount())
+            .type(OkexAdaptersV3.adaptFuturesSwapType(mo.getType()))
+            .orderType(orderType)
+            .matchPrice(FuturesSwapMatchPrice.best_counter_party_price_yes)
+            .build();
+    OrderPlacementResponse placed = futuresPlaceOrder(req);
+    if (placed == null) return null;
+    return placed.getOrderId();
+  }
+
   public String placeMarginLimitOrder(LimitOrder o) throws IOException {
     if (!(o.getInstrument() instanceof CurrencyPair)) {
       throw new IllegalStateException(
@@ -150,7 +186,7 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
   }
 
   public String placeFuturesLimitOrder(LimitOrder o) throws IOException {
-    if (!(o.getInstrument() instanceof FuturesContractV3)) {
+    if (!(o.getInstrument() instanceof FuturesContract)) {
       throw new IllegalStateException(
           "The instrument of this order is not a future: " + o.getInstrument());
     }
@@ -163,13 +199,14 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
 
     FuturesOrderPlacementRequest req =
         FuturesOrderPlacementRequest.builder()
-            .instrumentId(OkexAdaptersV3.toFuturesInstrument((FuturesContractV3) o.getInstrument()))
+            .instrumentId(OkexAdaptersV3.toFuturesInstrument((FuturesContract) o.getInstrument()))
             .price(o.getLimitPrice())
             .size(o.getOriginalAmount())
             .type(OkexAdaptersV3.adaptFuturesSwapType(o.getType()))
             .orderType(orderType)
             .build();
     OrderPlacementResponse placed = futuresPlaceOrder(req);
+    if (placed == null) return null;
     return placed.getOrderId();
   }
 
@@ -181,19 +218,24 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
   @Override
   public boolean cancelOrder(CancelOrderParams orderParams) throws IOException {
     if (!(orderParams instanceof CancelOrderByIdParams)
-        || !(orderParams instanceof CancelOrderByCurrencyPair)) {
+        || !(orderParams instanceof CancelOrderByInstrument)) {
       throw new UnsupportedOperationException(
           "Cancelling an order is only available for a single market and a single id.");
     }
 
     String id = ((CancelOrderByIdParams) orderParams).getOrderId();
-    String instrumentId =
-        OkexAdaptersV3.toSpotInstrument(
-            ((CancelOrderByCurrencyPair) orderParams).getCurrencyPair());
+    Instrument instrument = ((CancelOrderByInstrument) orderParams).getInstrument();
+    if (instrument instanceof CurrencyPair) {
+      String instrumentId = OkexAdaptersV3.toSpotInstrument((CurrencyPair) instrument);
 
-    OrderCancellationRequest req =
-        OrderCancellationRequest.builder().instrumentId(instrumentId).build();
-    OrderCancellationResponse o = spotCancelOrder(id, req);
+      OrderCancellationRequest req =
+          OrderCancellationRequest.builder().instrumentId(instrumentId).build();
+      OrderCancellationResponse o = spotCancelOrder(id, req);
+    }
+    if (instrument instanceof FuturesContract) {
+      String instrumentId = OkexAdaptersV3.toFuturesInstrument((FuturesContract) instrument);
+      OrderCancellationResponse o = futuresCancelOrder(instrumentId, id);
+    }
     return true;
   }
 
@@ -204,15 +246,39 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
 
   @Override
   public Collection<Order> getOrder(String... orderIds) throws IOException {
-    List<OkCoinFuturesOrderQueryParams> params = new ArrayList<OkCoinFuturesOrderQueryParams>();
+    List<OkexOrderQueryParams> params = new ArrayList<OkexOrderQueryParams>();
 
-    for (CurrencyPair symbol : exchange.getExchangeSymbols()) {
+    for (Instrument symbol : exchange.getExchangeSymbols()) {
       for (String orderId : orderIds) {
-        params.add(new OkCoinFuturesOrderQueryParams(symbol, futuresContract, orderId));
+        params.add(new OkexOrderQueryParams(symbol, orderId));
       }
     }
+    return getOrder(params.toArray(new OkexOrderQueryParams[params.size()]));
+  }
 
-    return getOrder(params.toArray(new OkCoinFuturesOrderQueryParams[params.size()]));
+  @Override
+  public Collection<Order> getOrder(OrderQueryParams... orderQueryParams) throws IOException {
+    List<Order> openOrders = new ArrayList<>();
+
+    for (OrderQueryParams orderQueryParam : orderQueryParams) {
+      OkexOrderQueryParams myParams = (OkexOrderQueryParams) orderQueryParam;
+      if (myParams.getOrderId() == null) continue;
+      Instrument instrument = myParams.getInstrument();
+      String orderId = String.valueOf(myParams.getOrderId());
+      if (instrument instanceof CurrencyPair) {
+        CurrencyPair currencyPair = (CurrencyPair) instrument;
+        openOrders.add(
+            OkexAdaptersV3.convert(
+                getSpotOrder(orderId, OkexAdaptersV3.toSpotInstrument(currencyPair))));
+      }
+      if (instrument instanceof FuturesContract) {
+        FuturesContract futuresContract = (FuturesContract) instrument;
+        openOrders.add(
+            OkexAdaptersV3.convert(
+                getFuturesOrder(OkexAdaptersV3.toFuturesInstrument(futuresContract), orderId)));
+      }
+    }
+    return openOrders;
   }
 
   @Override
@@ -222,28 +288,55 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
 
   @Override
   public OpenOrders getOpenOrders(OpenOrdersParams params) throws IOException {
-    if (!(params instanceof OpenOrdersParamCurrencyPair)) {
+    if (!(params instanceof OpenOrdersParamInstrument)) {
       throw new UnsupportedOperationException(
           "Getting open orders is only available for a single market.");
     }
-    CurrencyPair pair = ((OpenOrdersParamCurrencyPair) params).getCurrencyPair();
+    Instrument instrument = ((OpenOrdersParamInstrument) params).getInstrument();
 
-    final String instrument = OkexAdaptersV3.toSpotInstrument(pair);
-    final String state = "6"; // "6": Incomplete（open+partially filled）
+    if (instrument instanceof CurrencyPair) {
+      List<OkexOpenOrder> all = new ArrayList<>();
+      CurrencyPair currencyPair = (CurrencyPair) instrument;
+      final String pair = OkexAdaptersV3.toSpotInstrument(currencyPair);
+      final String state = "6"; // "6": Incomplete（open+partially filled）
 
-    String from = null;
-    List<OkexOpenOrder> all = new ArrayList<>();
-    boolean stop = false;
-    do {
+      String from = null;
 
-      List<OkexOpenOrder> l = getSpotOrderList(instrument, from, null, orders_limit, state);
-      all.addAll(l);
-      stop = l.size() < orders_limit;
-      if (!stop) {
-        from = l.get(l.size() - 1).getOrderId();
-      }
-    } while (!stop);
-    return new OpenOrders(all.stream().map(OkexAdaptersV3::convert).collect(Collectors.toList()));
+      boolean stop = false;
+      do {
+
+        List<OkexOpenOrder> l = getSpotOrderList(pair, from, null, orders_limit, state);
+        all.addAll(l);
+        stop = l.size() < orders_limit;
+        if (!stop) {
+          from = l.get(l.size() - 1).getOrderId();
+        }
+      } while (!stop);
+      return new OpenOrders(all.stream().map(OkexAdaptersV3::convert).collect(Collectors.toList()));
+    }
+
+    if (instrument instanceof FuturesContract) {
+      List<OkexFuturesOpenOrder> all = new ArrayList<>();
+      FuturesContract futuresContract = (FuturesContract) instrument;
+      final String contract = OkexAdaptersV3.toFuturesInstrument(futuresContract);
+      final String state = "6"; // "6": Incomplete（open+partially filled）
+
+      String from = null;
+
+      boolean stop = false;
+      do {
+
+        List<OkexFuturesOpenOrder> l =
+            getFuturesOrderList(contract, from, null, orders_limit, state);
+        all.addAll(l);
+        stop = l.size() < orders_limit;
+        if (!stop) {
+          from = l.get(l.size() - 1).getOrderId();
+        }
+      } while (!stop);
+      return new OpenOrders(all.stream().map(OkexAdaptersV3::convert).collect(Collectors.toList()));
+    }
+    return new OpenOrders(null);
   }
 
   @Override
@@ -286,8 +379,7 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
     allOrdersWithTrades.forEach(
         o -> {
           try {
-            fetchTradesForOrder(o)
-                .stream()
+            fetchTradesForOrder(o).stream()
                 .filter(
                     t ->
                         Side.buy
@@ -367,8 +459,7 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
     allOrdersWithTrades.forEach(
         o -> {
           try {
-            fetchMarginTradesForOrder(o)
-                .stream()
+            fetchMarginTradesForOrder(o).stream()
                 .filter(
                     t ->
                         Side.buy
@@ -450,5 +541,60 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
       }
     } while (!stop);
     return all;
+  }
+
+  public static final class OkexOrderQueryParams extends DefaultQueryOrderParam
+      implements OrderQueryParamInstrument {
+    private Instrument instrument;
+    private String orderId;
+
+    public OkexOrderQueryParams() {}
+
+    public OkexOrderQueryParams(Instrument instrument, String orderId) {
+      super(orderId);
+      this.instrument = instrument;
+      this.orderId = orderId;
+    }
+
+    @Override
+    public Instrument getInstrument() {
+      return instrument;
+    }
+
+    @Override
+    public void setInstrument(Instrument instrument) {
+      this.instrument = instrument;
+    }
+
+    @Override
+    public String getOrderId() {
+      return orderId;
+    }
+
+    @Override
+    public void setOrderId(String orderId) {
+      this.orderId = orderId;
+    }
+  }
+
+  public static class OkexCancelOrderParam
+      implements CancelOrderByIdParams, CancelOrderByInstrument {
+    private final Instrument instrument;
+    private final String id;
+
+    public OkexCancelOrderParam(Instrument instrument, String id) {
+      this.instrument = instrument;
+      this.id = id;
+    }
+
+    @Override
+    public Instrument getInstrument() {
+      return instrument;
+    }
+
+    @Override
+    public String getOrderId() {
+      return id;
+    }
   }
 }

@@ -1,12 +1,10 @@
 package org.knowm.xchange.okcoin.v3.dto.marketdata;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
-
 import org.knowm.xchange.okcoin.OkexExchangeV3;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OkexTrade {
 

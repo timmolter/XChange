@@ -1,17 +1,14 @@
-package org.knowm.xchange.okcoin;
-
-import java.io.Serializable;
-
-import org.knowm.xchange.currency.Currency;
-import org.knowm.xchange.currency.CurrencyPair;
-import org.knowm.xchange.instrument.Instrument;
+package org.knowm.xchange.instrument;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.io.Serializable;
+import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.currency.CurrencyPair;
 
 /** Delivery dates for future date currencies */
-public class FuturesContractV3 extends Instrument
-    implements Comparable<FuturesContractV3>, Serializable {
+public class FuturesContract extends Instrument
+    implements Comparable<FuturesContract>, Serializable {
   /** */
   private static final long serialVersionUID = -8400518639933611025L;
 
@@ -24,22 +21,23 @@ public class FuturesContractV3 extends Instrument
    *
    * @param prompt The approximated expiry of the futures contract
    */
-  public FuturesContractV3(CurrencyPair underlier, String prompt) {
+  public FuturesContract(CurrencyPair underlier, String prompt) {
     this.underlier = underlier;
     this.prompt = prompt;
   }
 
   @JsonCreator
-  public FuturesContractV3(String futuresContract) {
+  public FuturesContract(String futuresContract) {
 
-    int split = futuresContract.indexOf('/');
-    if (split < 1) {
+    String[] parts = futuresContract.split("/");
+    if (parts.length < 3) {
       throw new IllegalArgumentException(
           "Could not parse futures contract from '" + futuresContract + "'");
     }
-    String base = futuresContract.substring(0, split);
-    String counter = futuresContract.substring(split + 1);
-    String prompt = futuresContract.substring(split + 1);
+
+    String base = parts[0];
+    String counter = parts[1];
+    String prompt = parts[2];
     this.underlier = new CurrencyPair(base, counter);
     this.prompt = prompt;
   }
@@ -81,7 +79,7 @@ public class FuturesContractV3 extends Instrument
     if (getClass() != obj.getClass()) {
       return false;
     }
-    FuturesContractV3 other = (FuturesContractV3) obj;
+    FuturesContract other = (FuturesContract) obj;
     if (prompt == null) {
       if (other.prompt != null) {
         return false;
@@ -101,7 +99,7 @@ public class FuturesContractV3 extends Instrument
   }
 
   @Override
-  public int compareTo(FuturesContractV3 o) {
+  public int compareTo(FuturesContract o) {
     return (prompt.compareTo(o.prompt) << 16) + underlier.compareTo(o.underlier);
   }
 }

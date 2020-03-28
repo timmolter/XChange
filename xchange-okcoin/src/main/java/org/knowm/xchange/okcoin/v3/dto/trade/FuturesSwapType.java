@@ -1,7 +1,6 @@
 package org.knowm.xchange.okcoin.v3.dto.trade;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import lombok.AllArgsConstructor;
 
 /** 1:open long 2:open short 3:close long 4:close short */

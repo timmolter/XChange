@@ -33,4 +33,20 @@ public class OkexBaseService extends BaseExchangeService<OkexExchangeV3> impleme
     return System.currentTimeMillis() / 1000 + ".000"; //          <-- works as well
     // return Instant.now().toString();
   }
+
+  protected String createDelimitedString(String[] items) {
+
+    StringBuilder commaDelimitedString = null;
+    if (items != null) {
+      for (String item : items) {
+        if (commaDelimitedString == null) {
+          commaDelimitedString = new StringBuilder(item);
+        } else {
+          commaDelimitedString.append(",").append(item);
+        }
+      }
+    }
+
+    return (commaDelimitedString == null) ? null : commaDelimitedString.toString();
+  }
 }

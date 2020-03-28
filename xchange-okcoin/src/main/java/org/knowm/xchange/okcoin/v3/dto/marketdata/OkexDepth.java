@@ -1,5 +1,6 @@
 package org.knowm.xchange.okcoin.v3.dto.marketdata;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Collections;
@@ -9,10 +10,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
-
 import org.knowm.xchange.okcoin.OkexExchangeV3;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OkexDepth {
 

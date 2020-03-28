@@ -2,9 +2,9 @@ package org.knowm.xchange.okcoin;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.dto.Order.OrderStatus;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
@@ -16,6 +16,7 @@ import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.dto.marketdata.Trades.TradeSortType;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.exceptions.ExchangeException;
+import org.knowm.xchange.instrument.FuturesContract;
 import org.knowm.xchange.okcoin.v3.dto.account.OkexDepositRecord;
 import org.knowm.xchange.okcoin.v3.dto.account.OkexFundingAccountRecord;
 import org.knowm.xchange.okcoin.v3.dto.account.OkexSpotAccountRecord;
@@ -25,6 +26,7 @@ import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSpotTicker;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexTrade;
 import org.knowm.xchange.okcoin.v3.dto.trade.FuturesAccountsResponse.FuturesAccount;
 import org.knowm.xchange.okcoin.v3.dto.trade.FuturesSwapType;
+import org.knowm.xchange.okcoin.v3.dto.trade.OkexFuturesOpenOrder;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexOpenOrder;
 import org.knowm.xchange.okcoin.v3.dto.trade.Side;
 import org.knowm.xchange.okcoin.v3.dto.trade.SwapAccountsResponse.SwapAccountInfo;
@@ -67,7 +69,7 @@ public class OkexAdaptersV3 {
     return pair == null ? null : pair.base.getCurrencyCode() + "-" + pair.counter.getCurrencyCode();
   }
 
-  public static String toFuturesInstrument(FuturesContractV3 futuresContract) {
+  public static String toFuturesInstrument(FuturesContract futuresContract) {
     return futuresContract == null
         ? null
         : futuresContract.underlier.base.getCurrencyCode()
@@ -99,12 +101,12 @@ public class OkexAdaptersV3 {
    * @param instrument
    * @return
    */
-  public static FuturesContractV3 toFutures(String instrument) {
+  public static FuturesContract toFutures(String instrument) {
     String[] split = instrument.split("-");
     if (split == null || split.length < 3) {
       throw new ExchangeException("Not supported instrument: " + instrument);
     }
-    return new FuturesContractV3(new CurrencyPair(split[0], split[1]), split[2]);
+    return new FuturesContract(new CurrencyPair(split[0], split[1]), split[2]);
   }
 
   public static Ticker convert(OkexSpotTicker i) {
@@ -125,7 +127,22 @@ public class OkexAdaptersV3 {
         .id(o.getOrderId())
         .limitPrice(o.getPrice())
         .originalAmount(o.getSize())
+        .orderStatus(adaptOrderState(o.getState()))
         .timestamp(o.getCreatedAt())
+        .build();
+  }
+
+  public static LimitOrder convert(OkexFuturesOpenOrder o) {
+    return new LimitOrder.Builder(
+            adaptFuturesOrderType(o.getType()), toFutures(o.getInstrumentId()))
+        .id(o.getOrderId())
+        .limitPrice(o.getPrice())
+        .averagePrice(o.getPriceAvg())
+        .originalAmount(o.getSize())
+        .timestamp(o.getTimestamp())
+        .orderStatus(adaptOrderState(o.getState()))
+        .cumulativeAmount(o.getFilledQty())
+        .fee(o.getFee())
         .build();
   }
 
@@ -205,7 +222,7 @@ public class OkexAdaptersV3 {
   }
 
   public static Trades adaptFuturesTrades(
-      OkexFuturesTrade[] trades, FuturesContractV3 futuresContract) {
+      OkexFuturesTrade[] trades, FuturesContract futuresContract) {
 
     List<Trade> tradeList = new ArrayList<>(trades.length);
     for (OkexFuturesTrade trade : trades) {
@@ -215,8 +232,7 @@ public class OkexAdaptersV3 {
     return new Trades(tradeList, lastTid, TradeSortType.SortByTimestamp);
   }
 
-  private static Trade adaptFuturesTrade(
-      OkexFuturesTrade trade, FuturesContractV3 futuresContract) {
+  private static Trade adaptFuturesTrade(OkexFuturesTrade trade, FuturesContract futuresContract) {
 
     return new Trade.Builder()
         .type(trade.getSide().equals("buy") ? OrderType.BID : OrderType.ASK)
@@ -251,6 +267,43 @@ public class OkexAdaptersV3 {
         return FuturesSwapType.close_short;
       case EXIT_BID:
         return FuturesSwapType.close_long;
+      default:
+        return null;
+    }
+  }
+
+  public static OrderType adaptFuturesOrderType(FuturesSwapType orderType) {
+
+    switch (orderType) {
+      case open_long:
+        return OrderType.BID;
+      case open_short:
+        return OrderType.ASK;
+      case close_short:
+        return OrderType.EXIT_ASK;
+      case close_long:
+        return OrderType.EXIT_BID;
+      default:
+        return null;
+    }
+  }
+
+  public static OrderStatus adaptOrderState(String orderState) {
+    switch (orderState) {
+      case "-2":
+        return OrderStatus.REJECTED;
+      case "-1":
+        return OrderStatus.CANCELED;
+      case "0":
+        return OrderStatus.NEW;
+      case "1":
+        return OrderStatus.PARTIALLY_FILLED;
+      case "2":
+        return OrderStatus.FILLED;
+      case "3":
+        return OrderStatus.PENDING_NEW;
+      case "4":
+        return OrderStatus.PENDING_CANCEL;
       default:
         return null;
     }

@@ -29,14 +29,14 @@ public class OkCoinTradesDemo {
   public static void main(String[] args) throws IOException {
 
     ExchangeSpecification exSpec = new ExchangeSpecification(OkexExchangeV3.class);
-    exSpec.setSecretKey("D281C21275D62C1CAAFD4C59B5D60F57");
-    exSpec.setApiKey("197f2ab8-d0fb-464b-84fd-cfd971c112ac");
+    exSpec.setSecretKey("x");
+    exSpec.setApiKey("x");
 
     Exchange okcoinExchange = ExchangeFactory.INSTANCE.createExchange(exSpec);
 
-    futures(okcoinExchange);
+    // futures(okcoinExchange);
 
-    // generic(okcoinExchange);
+    generic(okcoinExchange);
     // raw(okcoinExchange);
   }
 
