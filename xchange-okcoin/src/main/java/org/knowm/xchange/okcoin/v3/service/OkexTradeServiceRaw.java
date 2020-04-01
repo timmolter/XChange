@@ -3,7 +3,10 @@ package org.knowm.xchange.okcoin.v3.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
 import org.knowm.xchange.instrument.FuturesContract;
+import org.knowm.xchange.instrument.Instrument;
+import org.knowm.xchange.instrument.SwapContract;
 import org.knowm.xchange.okcoin.OkexAdaptersV3;
 import org.knowm.xchange.okcoin.OkexExchangeV3;
 import org.knowm.xchange.okcoin.v3.dto.account.FuturesLeverageResponse;
@@ -140,9 +143,16 @@ public class OkexTradeServiceRaw extends OkexBaseService {
         apikey, digest, timestamp(), passphrase, orderId, instrumentId, from, to, limit);
   }
 
-  public OkexFuturePriceLimit getFuturesPriceLimits(FuturesContract futuresContract)
-      throws IOException {
-    return okex.getFuturesPriceLimit(OkexAdaptersV3.toFuturesInstrument(futuresContract));
+  public OkexFuturePriceLimit getFuturesPriceLimits(Instrument instrument) throws IOException {
+    if (instrument instanceof FuturesContract) {
+      FuturesContract futuresContract = (FuturesContract) instrument;
+      return okex.getFuturesPriceLimit(OkexAdaptersV3.toFuturesInstrument(futuresContract));
+    }
+    if (instrument instanceof SwapContract) {
+      SwapContract swapContract = (SwapContract) instrument;
+      return okex.getFuturesPriceLimit(OkexAdaptersV3.toSwapInstrument(swapContract));
+    }
+    return null;
   }
 
   /** ******************************** SWAP Trading API ********************************* */

@@ -3,6 +3,7 @@ package org.knowm.xchange.okcoin;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -12,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
 import org.knowm.xchange.okcoin.v3.dto.account.FuturesLeverageResponse;
 import org.knowm.xchange.okcoin.v3.dto.account.MarginAccountResponse;
 import org.knowm.xchange.okcoin.v3.dto.account.MarginAccountSettingsRecord;
@@ -29,6 +31,7 @@ import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSpotInstrument;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSpotTicker;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSwapInstrument;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSwapTicker;
+import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSwapTrade;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexTrade;
 import org.knowm.xchange.okcoin.v3.dto.trade.FundsTransferRequest;
 import org.knowm.xchange.okcoin.v3.dto.trade.FundsTransferResponse;
@@ -66,6 +69,7 @@ import org.knowm.xchange.okcoin.v3.dto.trade.SwapOrderBatchCancellationRequest;
 import org.knowm.xchange.okcoin.v3.dto.trade.SwapOrderPlacementRequest;
 import org.knowm.xchange.okcoin.v3.dto.trade.SwapPositionsEntry;
 import org.knowm.xchange.okcoin.v3.service.OkexException;
+
 import si.mazi.rescu.ParamsDigest;
 
 @Path("/api")
@@ -477,6 +481,23 @@ public interface OkexV3 {
   @GET
   @Path("/swap/v3/instruments/ticker")
   List<OkexSwapTicker> getAllSwapTickers() throws IOException, OkexException;
+
+  @GET
+  @Path("/swap/v3/instruments/{instrument_id}/trades")
+  OkexSwapTrade[] getSwapTrades(
+      @PathParam("instrument_id") String instrument, @QueryParam("limit") Long since)
+      throws IOException;
+
+  @GET
+  @Path("api/swap/v3/instruments/{instrument_id}/price_limit")
+  OkexFuturePriceLimit getSwapPriceLimit(@PathParam("instrument_id") String instrumentId)
+      throws IOException;
+
+  @GET
+  @Path("/api/swap/v3/instruments/{instrument_id}/book")
+  OkexDepth getSwapDepth(
+      @PathParam("instrument_id") String instrumentId, @QueryParam("size") Integer size)
+      throws IOException;
 
   /**
    * @param instrumentId [required] list the orders of specific trading pairs

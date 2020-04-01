@@ -2,6 +2,7 @@ package org.knowm.xchange.okcoin;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderStatus;
@@ -17,12 +18,14 @@ import org.knowm.xchange.dto.marketdata.Trades.TradeSortType;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.instrument.FuturesContract;
+import org.knowm.xchange.instrument.SwapContract;
 import org.knowm.xchange.okcoin.v3.dto.account.OkexDepositRecord;
 import org.knowm.xchange.okcoin.v3.dto.account.OkexFundingAccountRecord;
 import org.knowm.xchange.okcoin.v3.dto.account.OkexSpotAccountRecord;
 import org.knowm.xchange.okcoin.v3.dto.account.OkexWithdrawalRecord;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexFuturesTrade;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSpotTicker;
+import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSwapTrade;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexTrade;
 import org.knowm.xchange.okcoin.v3.dto.trade.FuturesAccountsResponse.FuturesAccount;
 import org.knowm.xchange.okcoin.v3.dto.trade.FuturesSwapType;
@@ -81,6 +84,15 @@ public class OkexAdaptersV3 {
             + futuresContract.underlier.counter.getCurrencyCode()
             + "-"
             + futuresContract.prompt;
+  }
+
+  public static String toSwapInstrument(SwapContract swapContract) {
+    return swapContract == null
+        ? null
+        : swapContract.underlier.base.getCurrencyCode()
+            + "-"
+            + swapContract.underlier.counter.getCurrencyCode()
+            + "-SWAP";
   }
 
   /**
@@ -253,6 +265,28 @@ public class OkexAdaptersV3 {
         .type(trade.getSide().equals("buy") ? OrderType.BID : OrderType.ASK)
         .originalAmount(trade.getQty())
         .currencyPair(futuresContract.underlier)
+        .price(trade.getPrice())
+        .timestamp(trade.getDate())
+        .id("" + trade.getTradeId())
+        .build();
+  }
+
+  public static Trades adaptSwapTrades(OkexSwapTrade[] trades, SwapContract swapContract) {
+    if (swapContract == null || trades == null) return null;
+    List<Trade> tradeList = new ArrayList<>(trades.length);
+    for (OkexSwapTrade trade : trades) {
+      tradeList.add(adaptSwapTrade(trade, swapContract));
+    }
+    long lastTid = trades.length > 0 ? (trades[trades.length - 1].getTradeId()) : 0L;
+    return new Trades(tradeList, lastTid, TradeSortType.SortByTimestamp);
+  }
+
+  private static Trade adaptSwapTrade(OkexSwapTrade trade, SwapContract swapContract) {
+    if (trade == null || swapContract == null) return null;
+    return new Trade.Builder()
+        .type(trade.getSide().equals("buy") ? OrderType.BID : OrderType.ASK)
+        .originalAmount(trade.getSize())
+        .currencyPair(swapContract.underlier)
         .price(trade.getPrice())
         .timestamp(trade.getDate())
         .id("" + trade.getTradeId())
