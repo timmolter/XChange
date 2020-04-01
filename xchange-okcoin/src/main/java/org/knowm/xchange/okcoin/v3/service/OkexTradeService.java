@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
@@ -140,6 +141,7 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
     }
     // 0: Normal limit order (Unfilled and 0 represent normal limit order) 1: Post only 2: Fill Or
     // Kill 3: Immediatel Or Cancel
+
     OrderPlacementType orderType =
         mo.hasFlag(OkexOrderFlags.POST_ONLY)
             ? OrderPlacementType.post_only
@@ -148,10 +150,7 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
     FuturesOrderPlacementRequest req =
         FuturesOrderPlacementRequest.builder()
             .instrumentId(OkexAdaptersV3.toFuturesInstrument((FuturesContract) mo.getInstrument()))
-            .price(
-                mo.getType() == OrderType.BID || mo.getType() == OrderType.EXIT_ASK
-                    ? BigDecimal.ZERO
-                    : BigDecimal.valueOf(Long.MAX_VALUE))
+            .price(BigDecimal.ZERO)
             .size(mo.getOriginalAmount())
             .type(OkexAdaptersV3.adaptFuturesSwapType(mo.getType()))
             .orderType(orderType)
@@ -267,15 +266,17 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
       String orderId = String.valueOf(myParams.getOrderId());
       if (instrument instanceof CurrencyPair) {
         CurrencyPair currencyPair = (CurrencyPair) instrument;
-        openOrders.add(
+        LimitOrder order =
             OkexAdaptersV3.convert(
-                getSpotOrder(orderId, OkexAdaptersV3.toSpotInstrument(currencyPair))));
+                getSpotOrder(orderId, OkexAdaptersV3.toSpotInstrument(currencyPair)));
+        if (order != null) openOrders.add(order);
       }
       if (instrument instanceof FuturesContract) {
         FuturesContract futuresContract = (FuturesContract) instrument;
-        openOrders.add(
+        LimitOrder order =
             OkexAdaptersV3.convert(
-                getFuturesOrder(OkexAdaptersV3.toFuturesInstrument(futuresContract), orderId)));
+                getFuturesOrder(OkexAdaptersV3.toFuturesInstrument(futuresContract), orderId));
+        if (order != null) openOrders.add(order);
       }
     }
     return openOrders;
@@ -379,7 +380,8 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
     allOrdersWithTrades.forEach(
         o -> {
           try {
-            fetchTradesForOrder(o).stream()
+            fetchTradesForOrder(o)
+                .stream()
                 .filter(
                     t ->
                         Side.buy
@@ -459,7 +461,8 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
     allOrdersWithTrades.forEach(
         o -> {
           try {
-            fetchMarginTradesForOrder(o).stream()
+            fetchMarginTradesForOrder(o)
+                .stream()
                 .filter(
                     t ->
                         Side.buy
