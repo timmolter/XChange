@@ -489,12 +489,12 @@ public interface OkexV3 {
       throws IOException;
 
   @GET
-  @Path("api/swap/v3/instruments/{instrument_id}/price_limit")
+  @Path("/swap/v3/instruments/{instrument_id}/price_limit")
   OkexFuturePriceLimit getSwapPriceLimit(@PathParam("instrument_id") String instrumentId)
       throws IOException;
 
   @GET
-  @Path("/api/swap/v3/instruments/{instrument_id}/book")
+  @Path("/swap/v3/instruments/{instrument_id}/depth")
   OkexDepth getSwapDepth(
       @PathParam("instrument_id") String instrumentId, @QueryParam("size") Integer size)
       throws IOException;

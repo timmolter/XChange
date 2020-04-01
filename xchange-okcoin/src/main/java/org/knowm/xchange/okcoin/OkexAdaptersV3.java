@@ -2,7 +2,6 @@ package org.knowm.xchange.okcoin;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderStatus;

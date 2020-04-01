@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
@@ -380,8 +379,7 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
     allOrdersWithTrades.forEach(
         o -> {
           try {
-            fetchTradesForOrder(o)
-                .stream()
+            fetchTradesForOrder(o).stream()
                 .filter(
                     t ->
                         Side.buy
@@ -461,8 +459,7 @@ public class OkexTradeService extends OkexTradeServiceRaw implements TradeServic
     allOrdersWithTrades.forEach(
         o -> {
           try {
-            fetchMarginTradesForOrder(o)
-                .stream()
+            fetchMarginTradesForOrder(o).stream()
                 .filter(
                     t ->
                         Side.buy

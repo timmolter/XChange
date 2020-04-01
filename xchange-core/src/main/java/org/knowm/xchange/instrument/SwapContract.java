@@ -1,12 +1,10 @@
 package org.knowm.xchange.instrument;
 
-import java.io.Serializable;
-
-import org.knowm.xchange.currency.Currency;
-import org.knowm.xchange.currency.CurrencyPair;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.io.Serializable;
+import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.currency.CurrencyPair;
 
 public class SwapContract extends Instrument implements Comparable<SwapContract>, Serializable {
   /** */

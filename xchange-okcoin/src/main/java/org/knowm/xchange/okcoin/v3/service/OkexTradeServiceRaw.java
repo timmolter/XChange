@@ -3,7 +3,6 @@ package org.knowm.xchange.okcoin.v3.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
 import org.knowm.xchange.instrument.FuturesContract;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.instrument.SwapContract;

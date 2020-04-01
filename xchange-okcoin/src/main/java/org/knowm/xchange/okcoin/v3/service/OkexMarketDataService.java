@@ -3,7 +3,6 @@ package org.knowm.xchange.okcoin.v3.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.OrderBook;
@@ -37,8 +36,7 @@ public class OkexMarketDataService extends OkexMarketDataServiceRaw implements M
 
   @Override
   public List<Ticker> getTickers(Params params) throws IOException {
-    return okex.getAllSpotTickers()
-        .stream()
+    return okex.getAllSpotTickers().stream()
         .map(OkexAdaptersV3::convert)
         .collect(Collectors.toList());
   }
@@ -109,15 +107,11 @@ public class OkexMarketDataService extends OkexMarketDataServiceRaw implements M
 
   public static OrderBook convertOrderBook(OkexDepth ob, CurrencyPair pair) {
     List<LimitOrder> bids =
-        ob.bids
-            .entrySet()
-            .stream()
+        ob.bids.entrySet().stream()
             .map(e -> new LimitOrder(OrderType.BID, e.getValue(), pair, null, null, e.getKey()))
             .collect(Collectors.toList());
     List<LimitOrder> asks =
-        ob.asks
-            .entrySet()
-            .stream()
+        ob.asks.entrySet().stream()
             .map(e -> new LimitOrder(OrderType.ASK, e.getValue(), pair, null, null, e.getKey()))
             .collect(Collectors.toList());
     return new OrderBook(ob.getTimestamp(), asks, bids);
