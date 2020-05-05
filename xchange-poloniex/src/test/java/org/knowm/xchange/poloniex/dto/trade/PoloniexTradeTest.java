@@ -14,23 +14,23 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 
-public class PoloniexUserTradeTest {
+public class PoloniexTradeTest {
 
   @Test
   public void testTradeHistoryMultiPair()
       throws JsonParseException, JsonMappingException, IOException {
 
     final InputStream is =
-        PoloniexUserTrade.class.getResourceAsStream(
+        PoloniexTrade.class.getResourceAsStream(
             "/org/knowm/xchange/poloniex/dto/trade/trade-history-multi-pair.json");
 
     final ObjectMapper mapper = new ObjectMapper();
     final JavaType stringType = mapper.getTypeFactory().constructType(String.class, String.class);
-    final JavaType tradeArray = mapper.getTypeFactory().constructArrayType(PoloniexUserTrade.class);
+    final JavaType tradeArray = mapper.getTypeFactory().constructArrayType(PoloniexTrade.class);
     final JavaType multiPairTradeType =
         mapper.getTypeFactory().constructMapType(HashMap.class, stringType, tradeArray);
 
-    final Map<String, PoloniexUserTrade[]> tradeHistory = mapper.readValue(is, multiPairTradeType);
+    final Map<String, PoloniexTrade[]> tradeHistory = mapper.readValue(is, multiPairTradeType);
     assertThat(tradeHistory).hasSize(2);
 
     assertThat(tradeHistory).containsKey("BTC_LTC");
@@ -39,7 +39,7 @@ public class PoloniexUserTradeTest {
     assertThat(tradeHistory).containsKey("BTC_DRK");
     assertThat(tradeHistory.get("BTC_DRK")).hasSize(1);
 
-    PoloniexUserTrade trade = tradeHistory.get("BTC_DRK")[0];
+    PoloniexTrade trade = tradeHistory.get("BTC_DRK")[0];
     assertThat(trade.getTradeID()).isEqualTo("296610");
     assertThat(trade.getDate()).isEqualTo("2014-09-14 04:54:57");
     assertThat(trade.getRate()).isEqualTo("0.00583818");
@@ -55,16 +55,16 @@ public class PoloniexUserTradeTest {
       throws JsonParseException, JsonMappingException, IOException {
 
     final InputStream is =
-        PoloniexUserTrade.class.getResourceAsStream(
+        PoloniexTrade.class.getResourceAsStream(
             "/org/knowm/xchange/poloniex/dto/trade/trade-history-single-pair.json");
 
     final ObjectMapper mapper = new ObjectMapper();
-    final JavaType tradeArray = mapper.getTypeFactory().constructArrayType(PoloniexUserTrade.class);
+    final JavaType tradeArray = mapper.getTypeFactory().constructArrayType(PoloniexTrade.class);
 
-    PoloniexUserTrade[] tradeHistory = mapper.readValue(is, tradeArray);
+    PoloniexTrade[] tradeHistory = mapper.readValue(is, tradeArray);
     assertThat(tradeHistory).hasSize(3);
 
-    PoloniexUserTrade trade = tradeHistory[0];
+    PoloniexTrade trade = tradeHistory[0];
     assertThat(trade.getTradeID()).isEqualTo("267356");
     assertThat(trade.getDate()).isEqualTo("2014-09-12 00:22:32");
     assertThat(trade.getRate()).isEqualTo("0.01026896");

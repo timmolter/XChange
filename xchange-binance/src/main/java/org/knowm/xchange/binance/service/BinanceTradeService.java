@@ -12,11 +12,7 @@ import org.knowm.xchange.Exchange;
 import org.knowm.xchange.binance.BinanceAdapters;
 import org.knowm.xchange.binance.BinanceErrorAdapter;
 import org.knowm.xchange.binance.dto.BinanceException;
-import org.knowm.xchange.binance.dto.trade.BinanceNewOrder;
-import org.knowm.xchange.binance.dto.trade.BinanceOrder;
-import org.knowm.xchange.binance.dto.trade.BinanceTrade;
-import org.knowm.xchange.binance.dto.trade.OrderType;
-import org.knowm.xchange.binance.dto.trade.TimeInForce;
+import org.knowm.xchange.binance.dto.trade.*;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
@@ -280,9 +276,10 @@ public class BinanceTradeService extends BinanceTradeServiceRaw implements Trade
           binanceTrades.stream()
               .map(
                   t ->
-                      new UserTrade.Builder()
+                      new BinanceUserTrade.Builder()
                           .type(BinanceAdapters.convertType(t.isBuyer))
                           .originalAmount(t.qty)
+                          .originalVolume(t.quoteQty)
                           .currencyPair(pair)
                           .price(t.price)
                           .timestamp(t.getTime())

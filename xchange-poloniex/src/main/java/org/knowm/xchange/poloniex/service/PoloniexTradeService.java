@@ -28,8 +28,8 @@ import org.knowm.xchange.poloniex.PoloniexUtils;
 import org.knowm.xchange.poloniex.dto.PoloniexException;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexLimitOrder;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexOpenOrder;
+import org.knowm.xchange.poloniex.dto.trade.PoloniexTrade;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexTradeResponse;
-import org.knowm.xchange.poloniex.dto.trade.PoloniexUserTrade;
 import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.CancelOrderByIdParams;
 import org.knowm.xchange.service.trade.params.CancelOrderParams;
@@ -199,22 +199,22 @@ public class PoloniexTradeService extends PoloniexTradeServiceRaw implements Tra
     try {
       List<UserTrade> trades = new ArrayList<>();
       if (currencyPair == null) {
-        HashMap<String, PoloniexUserTrade[]> poloniexUserTrades =
+        HashMap<String, PoloniexTrade[]> poloniexUserTrades =
             returnTradeHistory(startTime, endTime, limit);
         if (poloniexUserTrades != null) {
-          for (Map.Entry<String, PoloniexUserTrade[]> mapEntry : poloniexUserTrades.entrySet()) {
+          for (Map.Entry<String, PoloniexTrade[]> mapEntry : poloniexUserTrades.entrySet()) {
             currencyPair = PoloniexUtils.toCurrencyPair(mapEntry.getKey());
-            for (PoloniexUserTrade poloniexUserTrade : mapEntry.getValue()) {
-              trades.add(PoloniexAdapters.adaptPoloniexUserTrade(poloniexUserTrade, currencyPair));
+            for (PoloniexTrade poloniexTrade : mapEntry.getValue()) {
+              trades.add(PoloniexAdapters.adaptPoloniexUserTrade(poloniexTrade, currencyPair));
             }
           }
         }
       } else {
-        PoloniexUserTrade[] poloniexUserTrades =
+        PoloniexTrade[] poloniexTrades =
             returnTradeHistory(currencyPair, startTime, endTime, limit);
-        if (poloniexUserTrades != null) {
-          for (PoloniexUserTrade poloniexUserTrade : poloniexUserTrades) {
-            trades.add(PoloniexAdapters.adaptPoloniexUserTrade(poloniexUserTrade, currencyPair));
+        if (poloniexTrades != null) {
+          for (PoloniexTrade poloniexTrade : poloniexTrades) {
+            trades.add(PoloniexAdapters.adaptPoloniexUserTrade(poloniexTrade, currencyPair));
           }
         }
       }
@@ -279,11 +279,11 @@ public class PoloniexTradeService extends PoloniexTradeServiceRaw implements Tra
     try {
       List<UserTrade> trades = new ArrayList<>();
 
-      PoloniexUserTrade[] poloniexUserTrades = returnOrderTrades(orderId);
-      if (poloniexUserTrades != null) {
-        for (PoloniexUserTrade poloniexUserTrade : poloniexUserTrades) {
-          poloniexUserTrade.setOrderNumber(orderId); // returnOrderTrades doesn't fill in orderId
-          trades.add(PoloniexAdapters.adaptPoloniexUserTrade(poloniexUserTrade, currencyPair));
+      PoloniexTrade[] poloniexTrades = returnOrderTrades(orderId);
+      if (poloniexTrades != null) {
+        for (PoloniexTrade poloniexTrade : poloniexTrades) {
+          poloniexTrade.setOrderNumber(orderId); // returnOrderTrades doesn't fill in orderId
+          trades.add(PoloniexAdapters.adaptPoloniexUserTrade(poloniexTrade, currencyPair));
         }
       }
 

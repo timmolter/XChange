@@ -1,4 +1,4 @@
-package org.knowm.xchange.poloniex.dto.trade;
+package org.knowm.xchange.bitstamp.dto.trade;
 
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.math.BigDecimal;
@@ -9,11 +9,11 @@ import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.UserTrade;
 
-public class PoloniexUserTrade extends UserTrade {
+public class BitstampUserTrade extends UserTrade {
 
   private BigDecimal originalVolume;
 
-  public PoloniexUserTrade(
+  public BitstampUserTrade(
       final Order.OrderType type,
       final BigDecimal originalAmount,
       final BigDecimal originalVolume,
@@ -48,7 +48,7 @@ public class PoloniexUserTrade extends UserTrade {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    final PoloniexUserTrade that = (PoloniexUserTrade) o;
+    final BitstampUserTrade that = (BitstampUserTrade) o;
     return Objects.equals(originalVolume, that.originalVolume);
   }
 
@@ -59,7 +59,7 @@ public class PoloniexUserTrade extends UserTrade {
 
   @Override
   public String toString() {
-    return "PoloniexUserTrade[type="
+    return "BitstampUserTrade[type="
         + type
         + ", originalAmount="
         + originalAmount
@@ -91,7 +91,7 @@ public class PoloniexUserTrade extends UserTrade {
   public static class Builder extends UserTrade.Builder {
     protected BigDecimal originalVolume;
 
-    public static Builder from(PoloniexUserTrade trade) {
+    public static Builder from(BitstampUserTrade trade) {
       return new Builder()
           .type(trade.getType())
           .originalAmount(trade.getOriginalAmount())
@@ -162,8 +162,8 @@ public class PoloniexUserTrade extends UserTrade {
     }
 
     @Override
-    public PoloniexUserTrade build() {
-      return new PoloniexUserTrade(
+    public BitstampUserTrade build() {
+      return new BitstampUserTrade(
           type,
           originalAmount,
           originalVolume,

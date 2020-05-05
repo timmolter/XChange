@@ -16,8 +16,8 @@ import org.knowm.xchange.poloniex.dto.trade.PoloniexMarginPostionResponse;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexMoveResponse;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexOpenOrder;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexOrderFlags;
+import org.knowm.xchange.poloniex.dto.trade.PoloniexTrade;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexTradeResponse;
-import org.knowm.xchange.poloniex.dto.trade.PoloniexUserTrade;
 
 /** @author Zach Holmes */
 public class PoloniexTradeServiceRaw extends PoloniexBaseService {
@@ -32,7 +32,7 @@ public class PoloniexTradeServiceRaw extends PoloniexBaseService {
         apiKey, signatureCreator, exchange.getNonceFactory(), PoloniexAuthenticated.AllPairs.all);
   }
 
-  PoloniexUserTrade[] returnOrderTrades(String orderId) throws IOException {
+  PoloniexTrade[] returnOrderTrades(String orderId) throws IOException {
     return poloniexAuthenticated.returnOrderTrades(
         apiKey, signatureCreator, exchange.getNonceFactory(), orderId);
   }
@@ -45,7 +45,7 @@ public class PoloniexTradeServiceRaw extends PoloniexBaseService {
         PoloniexUtils.toPairString(currencyPair));
   }
 
-  public PoloniexUserTrade[] returnTradeHistory(
+  public PoloniexTrade[] returnTradeHistory(
       CurrencyPair currencyPair, Long startTime, Long endTime, Integer limit) throws IOException {
 
     return poloniexAuthenticated.returnTradeHistory(
@@ -58,7 +58,7 @@ public class PoloniexTradeServiceRaw extends PoloniexBaseService {
         limit);
   }
 
-  public HashMap<String, PoloniexUserTrade[]> returnTradeHistory(
+  public HashMap<String, PoloniexTrade[]> returnTradeHistory(
       Long startTime, Long endTime, Integer limit) throws IOException {
 
     String ignore = null; // only used so PoloniexAuthenticated.returnTradeHistory can be overloaded

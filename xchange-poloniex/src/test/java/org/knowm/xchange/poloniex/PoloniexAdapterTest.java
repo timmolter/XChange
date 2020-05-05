@@ -21,7 +21,7 @@ import org.knowm.xchange.dto.account.FundingRecord.Type;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.poloniex.dto.marketdata.PoloniexLoansDataTest;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexDepositsWithdrawalsResponse;
-import org.knowm.xchange.poloniex.dto.trade.PoloniexUserTrade;
+import org.knowm.xchange.poloniex.dto.trade.PoloniexTrade;
 
 public class PoloniexAdapterTest {
 
@@ -29,13 +29,13 @@ public class PoloniexAdapterTest {
   public void testTradeHistory() throws IOException {
 
     final InputStream is =
-        PoloniexUserTrade.class.getResourceAsStream(
+        PoloniexTrade.class.getResourceAsStream(
             "/org/knowm/xchange/poloniex/dto/trade/adapter-trade-history.json");
 
     final ObjectMapper mapper = new ObjectMapper();
-    final JavaType tradeArray = mapper.getTypeFactory().constructArrayType(PoloniexUserTrade.class);
+    final JavaType tradeArray = mapper.getTypeFactory().constructArrayType(PoloniexTrade.class);
 
-    PoloniexUserTrade[] tradeHistory = mapper.readValue(is, tradeArray);
+    PoloniexTrade[] tradeHistory = mapper.readValue(is, tradeArray);
 
     LimitOrder result = PoloniexAdapters.adaptUserTradesToOrderStatus("102", tradeHistory);
 

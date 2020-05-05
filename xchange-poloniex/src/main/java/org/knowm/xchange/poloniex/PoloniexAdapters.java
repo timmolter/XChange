@@ -37,12 +37,7 @@ import org.knowm.xchange.poloniex.dto.marketdata.PoloniexDepth;
 import org.knowm.xchange.poloniex.dto.marketdata.PoloniexMarketData;
 import org.knowm.xchange.poloniex.dto.marketdata.PoloniexPublicTrade;
 import org.knowm.xchange.poloniex.dto.marketdata.PoloniexTicker;
-import org.knowm.xchange.poloniex.dto.trade.PoloniexAdjustment;
-import org.knowm.xchange.poloniex.dto.trade.PoloniexDeposit;
-import org.knowm.xchange.poloniex.dto.trade.PoloniexDepositsWithdrawalsResponse;
-import org.knowm.xchange.poloniex.dto.trade.PoloniexOpenOrder;
-import org.knowm.xchange.poloniex.dto.trade.PoloniexUserTrade;
-import org.knowm.xchange.poloniex.dto.trade.PoloniexWithdrawal;
+import org.knowm.xchange.poloniex.dto.trade.*;
 
 /**
  * @author Zach Holmes
@@ -201,15 +196,15 @@ public class PoloniexAdapters {
   }
 
   public static UserTrade adaptPoloniexUserTrade(
-      PoloniexUserTrade userTrade, CurrencyPair currencyPair) {
+      PoloniexTrade poloniexTrade, CurrencyPair currencyPair) {
 
     OrderType orderType =
-        userTrade.getType().equalsIgnoreCase("buy") ? OrderType.BID : OrderType.ASK;
-    BigDecimal amount = userTrade.getAmount();
-    BigDecimal price = userTrade.getRate();
-    Date date = PoloniexUtils.stringToDate(userTrade.getDate());
-    String tradeId = String.valueOf(userTrade.getTradeID());
-    String orderId = String.valueOf(userTrade.getOrderNumber());
+        poloniexTrade.getType().equalsIgnoreCase("buy") ? OrderType.BID : OrderType.ASK;
+    BigDecimal amount = poloniexTrade.getAmount();
+    BigDecimal price = poloniexTrade.getRate();
+    Date date = PoloniexUtils.stringToDate(poloniexTrade.getDate());
+    String tradeId = String.valueOf(poloniexTrade.getTradeID());
+    String orderId = String.valueOf(poloniexTrade.getOrderNumber());
 
     // Poloniex returns fee as a multiplier, e.g. a 0.2% fee is 0.002
     // fee currency/size depends on trade direction (buy/sell). It appears to be rounded down
@@ -217,16 +212,17 @@ public class PoloniexAdapters {
     final String feeCurrencyCode;
     if (orderType == OrderType.ASK) {
       feeAmount =
-          amount.multiply(price).multiply(userTrade.getFee()).setScale(8, RoundingMode.DOWN);
+          amount.multiply(price).multiply(poloniexTrade.getFee()).setScale(8, RoundingMode.DOWN);
       feeCurrencyCode = currencyPair.counter.getCurrencyCode();
     } else {
-      feeAmount = amount.multiply(userTrade.getFee()).setScale(8, RoundingMode.DOWN);
+      feeAmount = amount.multiply(poloniexTrade.getFee()).setScale(8, RoundingMode.DOWN);
       feeCurrencyCode = currencyPair.base.getCurrencyCode();
     }
 
-    return new UserTrade.Builder()
+    return new PoloniexUserTrade.Builder()
         .type(orderType)
         .originalAmount(amount)
+        .originalVolume(poloniexTrade.getTotal())
         .currencyPair(currencyPair)
         .price(price)
         .timestamp(date)
@@ -352,9 +348,9 @@ public class PoloniexAdapters {
   }
 
   public static LimitOrder adaptUserTradesToOrderStatus(
-      String orderId, PoloniexUserTrade[] poloniexUserTrades) {
+      String orderId, PoloniexTrade[] poloniexTrades) {
 
-    if (poloniexUserTrades.length == 0) return null;
+    if (poloniexTrades.length == 0) return null;
 
     OrderType orderType = null;
     CurrencyPair currencyPair = null;
@@ -362,13 +358,13 @@ public class PoloniexAdapters {
 
     List<BigDecimal> weightedPrices = new ArrayList<>();
 
-    for (PoloniexUserTrade poloniexUserTrade : poloniexUserTrades) {
+    for (PoloniexTrade poloniexTrade : poloniexTrades) {
       orderType =
-          poloniexUserTrade.getType().equals("buy")
+          poloniexTrade.getType().equals("buy")
               ? OrderType.BID
               : OrderType.ASK; // what about others?
-      amount = amount.add(poloniexUserTrade.getAmount());
-      weightedPrices.add(poloniexUserTrade.getRate().multiply(poloniexUserTrade.getAmount()));
+      amount = amount.add(poloniexTrade.getAmount());
+      weightedPrices.add(poloniexTrade.getRate().multiply(poloniexTrade.getAmount()));
     }
 
     BigDecimal weightedAveragePrice =

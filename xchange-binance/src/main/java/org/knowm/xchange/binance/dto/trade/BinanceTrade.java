@@ -10,6 +10,7 @@ public final class BinanceTrade {
   public final long orderId;
   public final BigDecimal price;
   public final BigDecimal qty;
+  public final BigDecimal quoteQty;
   public final BigDecimal commission;
   public final String commissionAsset;
   public final long time;
@@ -22,6 +23,7 @@ public final class BinanceTrade {
       @JsonProperty("orderId") long orderId,
       @JsonProperty("price") BigDecimal price,
       @JsonProperty("qty") BigDecimal qty,
+      @JsonProperty("quoteQty") BigDecimal quoteQty,
       @JsonProperty("commission") BigDecimal commission,
       @JsonProperty("commissionAsset") String commissionAsset,
       @JsonProperty("time") long time,
@@ -32,6 +34,7 @@ public final class BinanceTrade {
     this.orderId = orderId;
     this.price = price;
     this.qty = qty;
+    this.quoteQty = quoteQty;
     this.commission = commission;
     this.commissionAsset = commissionAsset;
     this.time = time;

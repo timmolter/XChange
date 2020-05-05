@@ -24,8 +24,8 @@ import org.knowm.xchange.poloniex.dto.trade.PoloniexMarginAccountResponse;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexMarginPostionResponse;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexMoveResponse;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexOpenOrder;
+import org.knowm.xchange.poloniex.dto.trade.PoloniexTrade;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexTradeResponse;
-import org.knowm.xchange.poloniex.dto.trade.PoloniexUserTrade;
 import si.mazi.rescu.ParamsDigest;
 import si.mazi.rescu.SynchronizedValueFactory;
 
@@ -80,7 +80,7 @@ public interface PoloniexAuthenticated {
 
   @POST
   @FormParam("command")
-  PoloniexUserTrade[] returnOrderTrades(
+  PoloniexTrade[] returnOrderTrades(
       @HeaderParam("Key") String apiKey,
       @HeaderParam("Sign") ParamsDigest signature,
       @FormParam("nonce") SynchronizedValueFactory<Long> nonce,
@@ -98,7 +98,7 @@ public interface PoloniexAuthenticated {
 
   @POST
   @FormParam("command")
-  PoloniexUserTrade[] returnTradeHistory(
+  PoloniexTrade[] returnTradeHistory(
       @HeaderParam("Key") String apiKey,
       @HeaderParam("Sign") ParamsDigest signature,
       @FormParam("nonce") SynchronizedValueFactory<Long> nonce,
@@ -136,7 +136,7 @@ public interface PoloniexAuthenticated {
 
   @POST
   @FormParam("command")
-  HashMap<String, PoloniexUserTrade[]> returnTradeHistory(
+  HashMap<String, PoloniexTrade[]> returnTradeHistory(
       @HeaderParam("Key") String apiKey,
       @HeaderParam("Sign") ParamsDigest signature,
       @FormParam("nonce") SynchronizedValueFactory<Long> nonce,

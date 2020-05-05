@@ -15,10 +15,7 @@ import org.knowm.xchange.bitstamp.dto.marketdata.BitstampOrderBook;
 import org.knowm.xchange.bitstamp.dto.marketdata.BitstampPairInfo;
 import org.knowm.xchange.bitstamp.dto.marketdata.BitstampTicker;
 import org.knowm.xchange.bitstamp.dto.marketdata.BitstampTransaction;
-import org.knowm.xchange.bitstamp.dto.trade.BitstampOrderStatus;
-import org.knowm.xchange.bitstamp.dto.trade.BitstampOrderStatusResponse;
-import org.knowm.xchange.bitstamp.dto.trade.BitstampOrderTransaction;
-import org.knowm.xchange.bitstamp.dto.trade.BitstampUserTransaction;
+import org.knowm.xchange.bitstamp.dto.trade.*;
 import org.knowm.xchange.bitstamp.order.dto.BitstampGenericOrder;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -232,9 +229,10 @@ public final class BitstampAdapters {
       final CurrencyPair pair =
           new CurrencyPair(t.getBaseCurrency().toUpperCase(), t.getCounterCurrency().toUpperCase());
       UserTrade trade =
-          new UserTrade.Builder()
+          new BitstampUserTrade.Builder()
               .type(orderType)
               .originalAmount(t.getBaseAmount().abs())
+              .originalVolume(t.getCounterAmount().abs())
               .currencyPair(pair)
               .price(t.getPrice().abs())
               .timestamp(t.getDatetime())
