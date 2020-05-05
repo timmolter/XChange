@@ -1,5 +1,6 @@
 package org.knowm.xchange.okcoin;
 
+import java.text.SimpleDateFormat;
 import org.knowm.xchange.BaseExchange;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.exceptions.ExchangeException;
@@ -9,6 +10,9 @@ import org.knowm.xchange.okcoin.v3.service.OkexTradeService;
 import si.mazi.rescu.SynchronizedValueFactory;
 
 public class OkexExchangeV3 extends BaseExchange {
+
+  public static SimpleDateFormat timestampFormatter =
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
   @Override
   protected void initServices() {

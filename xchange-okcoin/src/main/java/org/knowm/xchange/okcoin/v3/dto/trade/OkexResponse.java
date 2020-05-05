@@ -25,7 +25,7 @@ public abstract class OkexResponse implements HttpResponseAware {
 
   public void checkResult() {
     if ((errorMessage != null && !errorMessage.isEmpty())
-        || (errorCode != null && !errorCode.isEmpty())) {
+        || (errorCode != null && !errorCode.isEmpty() && !errorCode.equals("0"))) {
       OkexException e = new OkexException();
       e.setCode(errorCode);
       e.setMessage(errorMessage + "\nbody: " + httpBody + "\nheaders: " + responseHeaders);

@@ -3,12 +3,16 @@ package org.knowm.xchange.okcoin.v3.service;
 import java.io.IOException;
 import java.util.List;
 import org.knowm.xchange.okcoin.OkexExchangeV3;
+import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexDepth;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexFutureInstrument;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexFutureTicker;
+import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexFuturesTrade;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSpotInstrument;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSpotTicker;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSwapInstrument;
 import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSwapTicker;
+import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexSwapTrade;
+import org.knowm.xchange.okcoin.v3.dto.marketdata.OkexTrade;
 
 public class OkexMarketDataServiceRaw extends OkexBaseService {
 
@@ -29,6 +33,23 @@ public class OkexMarketDataServiceRaw extends OkexBaseService {
     return tokenPairInformation;
   }
 
+  public OkexTrade[] getTrades(String instrumentID) throws IOException {
+    return getTrades(instrumentID, null);
+  }
+
+  public OkexTrade[] getTrades(String instrumentID, Long since) throws IOException {
+    return okex.getTrades(instrumentID, since);
+  }
+
+  public OkexDepth getDepth(String instrumentID) throws IOException {
+    return getDepth(instrumentID, null);
+  }
+
+  public OkexDepth getDepth(String instrumentID, Integer size) throws IOException {
+    size = (size == null || size < 1 || size > 200) ? 200 : size;
+    return okex.getDepth(instrumentID, size);
+  }
+
   public List<OkexFutureInstrument> getAllFutureInstruments() throws IOException {
     return okex.getAllFutureInstruments();
   }
@@ -37,11 +58,45 @@ public class OkexMarketDataServiceRaw extends OkexBaseService {
     return okex.getAllFutureTickers();
   }
 
+  public OkexFuturesTrade[] getFuturesTrades(String instrumentID) throws IOException {
+    return getFuturesTrades(instrumentID, null);
+  }
+
+  public OkexFuturesTrade[] getFuturesTrades(String instrumentID, Long since) throws IOException {
+    return okex.getFuturesTrades(instrumentID, since);
+  }
+
+  public OkexDepth getFuturesDepth(String instrumentID) throws IOException {
+    return getFuturesDepth(instrumentID, null);
+  }
+
+  public OkexDepth getFuturesDepth(String instrumentID, Integer size) throws IOException {
+    size = (size == null || size < 1 || size > 200) ? 200 : size;
+    return okex.getFuturesDepth(instrumentID, size);
+  }
+
   public List<OkexSwapInstrument> getAllSwapInstruments() throws IOException {
     return okex.getAllSwapInstruments();
   }
 
   public List<OkexSwapTicker> getAllSwapTickers() throws IOException {
     return okex.getAllSwapTickers();
+  }
+
+  public OkexSwapTrade[] getSwapTrades(String instrumentID) throws IOException {
+    return getSwapTrades(instrumentID, null);
+  }
+
+  public OkexSwapTrade[] getSwapTrades(String instrumentID, Long since) throws IOException {
+    return okex.getSwapTrades(instrumentID, since);
+  }
+
+  public OkexDepth getSwapDepth(String instrumentID) throws IOException {
+    return getSwapDepth(instrumentID, null);
+  }
+
+  public OkexDepth getSwapDepth(String instrumentID, Integer size) throws IOException {
+    size = (size == null || size < 1 || size > 200) ? 200 : size;
+    return okex.getSwapDepth(instrumentID, size);
   }
 }

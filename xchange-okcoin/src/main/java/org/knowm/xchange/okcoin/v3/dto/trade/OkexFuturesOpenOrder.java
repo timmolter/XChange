@@ -25,7 +25,7 @@ public class OkexFuturesOpenOrder {
   /** Filled quantity */
   private BigDecimal filledQty;
   /** Fees */
-  private String fee;
+  private BigDecimal fee;
 
   @JsonProperty("order_id")
   /** order ID */

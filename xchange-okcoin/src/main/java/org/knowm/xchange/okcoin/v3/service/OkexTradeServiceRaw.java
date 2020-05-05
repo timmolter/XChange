@@ -3,12 +3,17 @@ package org.knowm.xchange.okcoin.v3.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.knowm.xchange.instrument.FuturesContract;
+import org.knowm.xchange.instrument.Instrument;
+import org.knowm.xchange.instrument.SwapContract;
+import org.knowm.xchange.okcoin.OkexAdaptersV3;
 import org.knowm.xchange.okcoin.OkexExchangeV3;
 import org.knowm.xchange.okcoin.v3.dto.account.FuturesLeverageResponse;
 import org.knowm.xchange.okcoin.v3.dto.trade.FuturesMultipleOrderCancellationResponse;
 import org.knowm.xchange.okcoin.v3.dto.trade.FuturesMultipleOrderPlacementRequest;
 import org.knowm.xchange.okcoin.v3.dto.trade.FuturesOpenOrdersResponse;
 import org.knowm.xchange.okcoin.v3.dto.trade.FuturesOrderPlacementRequest;
+import org.knowm.xchange.okcoin.v3.dto.trade.OkexFuturePriceLimit;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexFuturesOpenOrder;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexFuturesTransaction;
 import org.knowm.xchange.okcoin.v3.dto.trade.OkexOpenOrder;
@@ -58,6 +63,10 @@ public class OkexTradeServiceRaw extends OkexBaseService {
     return okex.spotCancelMultipleOrders(apikey, digest, timestamp(), passphrase, req);
   }
 
+  public OkexOpenOrder getSpotOrder(String instrumentId, String orderId) throws IOException {
+    return okex.getSpotOrder(apikey, digest, timestamp(), passphrase, instrumentId, orderId);
+  }
+
   public List<OkexOpenOrder> getSpotOrderList(
       String instrumentId, String from, String to, Integer limit, String state) throws IOException {
     return okex.getSpotOrderList(
@@ -72,6 +81,11 @@ public class OkexTradeServiceRaw extends OkexBaseService {
   }
 
   /** ******************************** Futures Trading API ********************************* */
+  public OkexFuturesOpenOrder getFuturesOrder(String instrumentId, String orderId)
+      throws IOException {
+    return okex.getFuturesOrder(apikey, digest, timestamp(), passphrase, instrumentId, orderId);
+  }
+
   public List<OkexFuturesOpenOrder> getFuturesOrderList(
       String instrumentId, String from, String to, Integer limit, String state) throws IOException {
     FuturesOpenOrdersResponse res =
@@ -128,7 +142,23 @@ public class OkexTradeServiceRaw extends OkexBaseService {
         apikey, digest, timestamp(), passphrase, orderId, instrumentId, from, to, limit);
   }
 
+  public OkexFuturePriceLimit getFuturesPriceLimits(Instrument instrument) throws IOException {
+    if (instrument instanceof FuturesContract) {
+      FuturesContract futuresContract = (FuturesContract) instrument;
+      return okex.getFuturesPriceLimit(OkexAdaptersV3.toFuturesInstrument(futuresContract));
+    }
+    if (instrument instanceof SwapContract) {
+      SwapContract swapContract = (SwapContract) instrument;
+      return okex.getFuturesPriceLimit(OkexAdaptersV3.toSwapInstrument(swapContract));
+    }
+    return null;
+  }
+
   /** ******************************** SWAP Trading API ********************************* */
+  public OkexSwapOpenOrder getSwapOrder(String instrumentId, String orderId) throws IOException {
+    return okex.getSwapOrder(apikey, digest, timestamp(), passphrase, instrumentId, orderId);
+  }
+
   public List<OkexSwapOpenOrder> getSwapOrderList(
       String instrumentId, String from, String to, Integer limit, String state) throws IOException {
     SwapOpenOrdersResponse res =
