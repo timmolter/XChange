@@ -3,6 +3,9 @@ package info.bitrich.xchangestream.service.netty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.reactivex.Completable;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import java.io.IOException;
 import java.time.Duration;
 import org.slf4j.Logger;
@@ -56,11 +59,17 @@ public abstract class JsonNettyStreamingService extends NettyStreamingService<Js
     }
   }
 
-  protected void sendObjectMessage(Object message) {
-    try {
-      sendMessage(objectMapper.writeValueAsString(message));
-    } catch (JsonProcessingException e) {
-      LOG.error("Error creating json message: {}", e.getMessage());
-    }
+  /**
+   * Sends a message on the socket. This is a non-blocking operation, so if you want to wait
+   * until the message has been sent, call {@link Completable#blockingAwait()} on the result.
+   *
+   * @param message The object message to send.
+   * @return
+   */
+  protected Completable sendObjectMessage(Object message) {
+    return Single.fromCallable(() -> objectMapper.writeValueAsString(message))
+        .flatMapCompletable(super::sendMessage)
+        .doOnError(e -> LOG.error("Error creating json message: {}", e.getMessage()))
+        .cache();
   }
 }

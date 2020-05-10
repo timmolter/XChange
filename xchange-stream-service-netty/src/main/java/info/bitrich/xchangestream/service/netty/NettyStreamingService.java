@@ -35,8 +35,10 @@ import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.internal.SocketUtils;
 import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import java.io.IOException;
 import java.net.URI;
@@ -260,12 +262,8 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
               }
               reconnFailEmitters.forEach(emitter -> emitter.onNext(t));
             })
-        .doOnComplete(
-            () -> {
-              resubscribeChannels();
-
-              connectionSuccessEmitters.forEach(emitter -> emitter.onNext(new Object()));
-            });
+        .andThen(Completable.defer(this::resubscribeChannels))
+        .doOnComplete(() -> connectionSuccessEmitters.forEach(emitter -> emitter.onNext(new Object())));
   }
 
   private void scheduleReconnect() {
@@ -316,14 +314,36 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
   public String getSubscriptionUniqueId(String channelName, Object... args) {
     return channelName;
   }
+
   /**
    * Some exchanges rate limit messages sent to the socket (Kraken), by default this method does not
    * rateLimit the messages sent out. Override this method to provide a rateLimiter, and call
    * acquire on the rate limiter, to slow down out going messages.
+   *
+   * @deprecated Use the non-blocking version: #acquireSendMessageRateLimiter.
    */
+  @Deprecated
   protected void sendMessageRateLimiterAcquire() {
     // no rate limiter by default
   }
+
+  /**
+   * Some exchanges rate limit messages sent to the socket (Kraken), by default this method does not
+   * rateLimit the messages sent out. Override this method to provide a rateLimiter, and call
+   * acquire on the rate limiter, to slow down out going messages.
+   *
+   * <p>Ideally this method should be implemented in a non-blocking fashion, returning a
+   * {@link Completable} which completes on callback when a ticket is available. However,
+   * it is permissible to simply block and return {@link Completable#complete()} if there
+   * is no other option.</p>
+   *
+   * @return Completable which completes when the ticket has been acquired.
+   */
+  protected Completable acquireSendMessageRateLimiter() {
+    // no rate limiter by default
+    return Completable.fromRunnable(this::sendMessageRateLimiterAcquire);
+  }
+
   /**
    * Handler that receives incoming messages.
    *
@@ -331,24 +351,38 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
    */
   public abstract void messageHandler(String message);
 
-  public void sendMessage(String message) {
-    LOG.debug("Sending message: {}", message);
-
+  /**
+   * Sends a message on the socket. This is a non-blocking operation, so if you want to wait
+   * until the message has been sent, call {@link Completable#blockingAwait()} on the result.
+   *
+   * @param message The message to send.
+   * @return A {@link Completable} which completes when the message is successfully sent.
+   */
+  public Completable sendMessage(String message) {
     if (webSocketChannel == null || !webSocketChannel.isOpen()) {
       LOG.warn("WebSocket is not open! Call connect first.");
-      return;
+      return Completable.complete();
     }
-
     if (!webSocketChannel.isWritable()) {
       LOG.warn("Cannot send data to WebSocket as it is not writable.");
-      return;
+      return Completable.complete();
     }
-
-    if (message != null) {
-      sendMessageRateLimiterAcquire();
-      WebSocketFrame frame = new TextWebSocketFrame(message);
-      webSocketChannel.writeAndFlush(frame);
+    if (message == null) {
+      return Completable.complete();
     }
+    return Completable.fromRunnable(() -> LOG.debug("Sending message: {}", message))
+        .andThen(Completable.defer(this::acquireSendMessageRateLimiter))
+        .andThen(Completable.defer(() -> Completable.create(emitter -> {
+          WebSocketFrame frame = new TextWebSocketFrame(message);
+          webSocketChannel.writeAndFlush(frame).addListener(it -> {
+            if (it.isSuccess()) {
+              emitter.onComplete();
+            } else {
+              emitter.onError(it.cause());
+            }
+          });
+        })))
+        .cache();
   }
 
   public Observable<Throwable> subscribeReconnectFailure() {
@@ -389,15 +423,20 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
         .share();
   }
 
-  public void resubscribeChannels() {
-    for (Entry<String, Subscription> entry : channels.entrySet()) {
-      try {
-        Subscription subscription = entry.getValue();
-        sendMessage(getSubscribeMessage(subscription.channelName, subscription.args));
-      } catch (IOException e) {
-        LOG.error("Failed to reconnect channel: {}", entry.getKey());
-      }
-    }
+  /**
+   * Resubscribes to all the channels (e.g. after a reconnect). This is a non-blocking
+   * operation.
+   *
+   * @return A {@link Completable} which completes once all the rescubscription requets
+   * hve been sent.
+   */
+  public Completable resubscribeChannels() {
+    return Observable.fromIterable(channels.entrySet())
+        .observeOn(Schedulers.computation())
+        .flatMapCompletable(entry ->
+            sendMessage(getSubscribeMessage(entry.getValue().channelName, entry.getValue().args))
+              .doOnError(e -> LOG.error("Failed to reconnect channel: {}", entry.getKey())))
+        .cache();
   }
 
   protected String getChannel(T message) {

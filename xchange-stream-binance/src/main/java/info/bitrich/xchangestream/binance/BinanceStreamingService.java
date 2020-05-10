@@ -3,6 +3,7 @@ package info.bitrich.xchangestream.binance;
 import com.fasterxml.jackson.databind.JsonNode;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.service.netty.JsonNettyStreamingService;
+import io.reactivex.Completable;
 import java.io.IOException;
 
 public class BinanceStreamingService extends JsonNettyStreamingService {
@@ -42,8 +43,9 @@ public class BinanceStreamingService extends JsonNettyStreamingService {
   }
 
   @Override
-  public void sendMessage(String message) {
+  public Completable sendMessage(String message) {
     // Subscriptions are made upon connection - no messages are sent.
+    return Completable.complete();
   }
 
   /**

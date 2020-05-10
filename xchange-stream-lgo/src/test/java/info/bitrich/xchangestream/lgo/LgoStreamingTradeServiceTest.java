@@ -378,7 +378,7 @@ public class LgoStreamingTradeServiceTest {
     key.setValue(parsePublicKey(utf8));
     when(keyService.selectKey()).thenReturn(key);
     when(signatureService.signOrder(anyString())).thenReturn(new LgoOrderSignature("signed"));
-    doNothing().when(streamingService).sendMessage(anyString());
+    when(streamingService.sendMessage(anyString())).then(inv -> null);
 
     String ref = service.placeLimitOrder(limitOrder);
 
