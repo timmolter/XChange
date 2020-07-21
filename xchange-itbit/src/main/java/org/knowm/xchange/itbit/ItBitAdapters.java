@@ -90,11 +90,10 @@ public final class ItBitAdapters {
       throws InvalidFormatException {
 
     List<Trade> tradesList = new ArrayList<>(trades.getCount());
-    long lastMatchNumber = 0;
+    String lastMatchNumber = "0";
     for (int i = 0; i < trades.getCount(); i++) {
       ItBitTrade trade = trades.getTrades()[i];
-      long matchNumber = trade.getMatchNumber();
-      if (matchNumber > lastMatchNumber) lastMatchNumber = matchNumber;
+      lastMatchNumber = trade.getMatchNumber();
       tradesList.add(adaptTrade(trade, currencyPair));
     }
     return new Trades(tradesList, lastMatchNumber, TradeSortType.SortByID);

@@ -166,7 +166,7 @@ public class KucoinTradeService extends KucoinTradeServiceRaw implements TradeSe
       }
     }
 
-    return new UserTrades(userTrades, 0, TradeSortType.SortByTimestamp, nextPageCursor);
+    return new UserTrades(userTrades, "0", TradeSortType.SortByTimestamp, nextPageCursor);
   }
 
   @Override

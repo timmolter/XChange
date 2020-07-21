@@ -72,7 +72,7 @@ public class BleutradeAdaptersTest extends BleutradeDtoTestSupport {
         BleutradeAdapters.adaptBleutradeMarketHistory(response.getResult(), CurrencyPair.BTC_AUD);
 
     // then
-    assertThat(trades.getlastID()).isEqualTo(0);
+    assertThat(trades.getlastID()).isEqualTo("0");
 
     List<Trade> tradeList = trades.getTrades();
     assertThat(tradeList).hasSize(2);

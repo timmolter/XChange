@@ -180,10 +180,12 @@ public final class CoinoneAdapters {
       throw new CoinoneException(trades.getResult());
     }
     List<Trade> tradeList = new ArrayList<>(trades.getCompleteOrders().length);
+    String lastTrade = "0";
     for (CoinoneTradeData trade : trades.getCompleteOrders()) {
       tradeList.add(adaptTrade(trade, currencyPair));
+      lastTrade = trade.getTimestamp();
     }
-    return new Trades(tradeList, 0, Trades.TradeSortType.SortByTimestamp);
+    return new Trades(tradeList, lastTrade, Trades.TradeSortType.SortByTimestamp);
   }
 
   private static Trade adaptTrade(CoinoneTradeData trade, CurrencyPair currencyPair) {

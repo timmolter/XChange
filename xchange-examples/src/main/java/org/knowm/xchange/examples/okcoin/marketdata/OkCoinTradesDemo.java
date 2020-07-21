@@ -91,7 +91,7 @@ public class OkCoinTradesDemo {
     System.out.println("Trades size: " + trades.getTrades().size());
 
     // Get the latest trades data for BTC_CNY for the past couple of trades
-    trades = marketDataService.getTrades(CurrencyPair.BTC_CNY, trades.getlastID() - 10);
+    trades = marketDataService.getTrades(CurrencyPair.BTC_CNY, trades.getlastID());
     System.out.println(trades);
     System.out.println("Trades size: " + trades.getTrades().size());
   }

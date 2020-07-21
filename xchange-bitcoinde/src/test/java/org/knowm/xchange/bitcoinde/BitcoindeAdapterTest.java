@@ -61,7 +61,7 @@ public class BitcoindeAdapterTest {
 
     // Make sure the adapter got all the data
     assertThat(trades.getTrades().size()).isEqualTo(92);
-    assertThat(trades.getlastID()).isEqualTo(2844384);
+    assertThat(trades.getlastID()).isEqualTo("2844384");
 
     // Verify that all fields are filled
     assertThat(trades.getTrades().get(0).getId()).isEqualTo("2844111");

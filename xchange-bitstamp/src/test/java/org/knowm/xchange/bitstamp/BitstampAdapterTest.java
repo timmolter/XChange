@@ -120,7 +120,7 @@ public class BitstampAdapterTest {
 
     Trades trades = BitstampAdapters.adaptTrades(transactions, CurrencyPair.BTC_USD);
     assertThat(trades.getTrades().size()).isEqualTo(125);
-    assertThat(trades.getlastID()).isEqualTo(122260);
+    assertThat(trades.getlastID()).isEqualTo("122260");
     // verify all fields filled
     assertThat(trades.getTrades().get(0).getId()).isEqualTo("121984");
     assertThat(trades.getTrades().get(0).getPrice().toString()).isEqualTo("13.14");

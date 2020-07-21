@@ -19,7 +19,7 @@ public class Trades implements Serializable {
       new TradeTimestampComparator();
 
   private final List<Trade> trades;
-  private final long lastID;
+  private final String lastID;
   private final String nextPageCursor;
   private final TradeSortType tradeSortType;
 
@@ -51,8 +51,19 @@ public class Trades implements Serializable {
    * @param lastID Last Unique ID
    * @param tradeSortType Trade sort type
    */
-  public Trades(List<Trade> trades, long lastID, TradeSortType tradeSortType) {
+  public Trades(List<Trade> trades, String lastID, TradeSortType tradeSortType) {
     this(trades, lastID, tradeSortType, null);
+  }
+
+  /**
+   * Constructor
+   *
+   * @param trades A list of trades
+   * @param lastID Last Unique ID
+   * @param tradeSortType Trade sort type
+   */
+  public Trades(List<Trade> trades, Long lastID, TradeSortType tradeSortType) {
+    this(trades, String.valueOf(lastID), tradeSortType, null);
   }
 
   /**
@@ -65,7 +76,7 @@ public class Trades implements Serializable {
    *     TradeHistoryParamNextPageCursor
    */
   public Trades(
-      List<Trade> trades, long lastID, TradeSortType tradeSortType, String nextPageCursor) {
+      List<Trade> trades, String lastID, TradeSortType tradeSortType, String nextPageCursor) {
 
     this.trades = new ArrayList<>(trades);
     this.lastID = lastID;
@@ -92,7 +103,7 @@ public class Trades implements Serializable {
   }
 
   /** @return a Unique ID for the fetched trades */
-  public long getlastID() {
+  public String getlastID() {
 
     return lastID;
   }

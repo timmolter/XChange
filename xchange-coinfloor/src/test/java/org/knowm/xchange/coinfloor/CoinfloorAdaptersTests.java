@@ -143,7 +143,7 @@ public class CoinfloorAdaptersTests {
     UserTrades trades = CoinfloorAdapters.adaptTradeHistory(Arrays.asList(transactions));
 
     assertThat(trades.getTrades()).hasSize(2);
-    assertThat(trades.getlastID()).isEqualTo(2489586572518770L);
+    assertThat(trades.getlastID()).isEqualTo("2489586572518770");
     assertThat(trades.getTradeSortType()).isEqualTo(TradeSortType.SortByID);
 
     UserTrade trade0 = (UserTrade) trades.getTrades().get(0);

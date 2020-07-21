@@ -136,7 +136,7 @@ public class ANXAdapterTest {
     List<ANXTrade> anxTrades = anxTradesWrapper.getANXTrades();
 
     Trades trades = ANXAdapters.adaptTrades(anxTrades);
-    assertThat(trades.getlastID()).isEqualTo(1402189349725L);
+    assertThat(trades.getlastID()).isEqualTo("1402189349725");
 
     List<Trade> tradeList = trades.getTrades();
     assertThat(tradeList.size()).isEqualTo(2);

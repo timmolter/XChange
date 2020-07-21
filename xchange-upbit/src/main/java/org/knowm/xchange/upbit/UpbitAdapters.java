@@ -89,7 +89,8 @@ public final class UpbitAdapters {
     for (UpbitTrade trade : trades.getUpbitTrades()) {
       tradeList.add(adaptTrade(trade, currencyPair));
     }
-    return new Trades(tradeList, 0, Trades.TradeSortType.SortByTimestamp);
+    String lastTrade = tradeList.size() > 0 ? String.valueOf(tradeList.get(tradeList.size()-1).getId()) : "0";
+    return new Trades(tradeList, lastTrade, Trades.TradeSortType.SortByTimestamp);
   }
 
   private static Trade adaptTrade(UpbitTrade trade, CurrencyPair currencyPair) {

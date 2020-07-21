@@ -134,7 +134,7 @@ public class CryptopiaAdaptersTest {
     Trades trades = CryptopiaAdapters.adaptTrades(cryptopiaMarketHistory.getData());
     assertThat(trades).isNotNull();
 
-    assertThat(trades.getlastID()).isEqualTo(1501995183);
+    assertThat(trades.getlastID()).isEqualTo("1501995183");
     assertThat(trades.getTradeSortType()).isEqualTo(Trades.TradeSortType.SortByTimestamp);
     assertThat(trades.getTrades().size()).isGreaterThan(1);
   }

@@ -73,7 +73,7 @@ public class MercadoBitcoinAdapterTest {
 
     Trades trades = MercadoBitcoinAdapters.adaptTrades(transactions, CurrencyPair.BTC_BRL);
     assertThat(trades.getTrades().size()).isEqualTo(1000);
-    assertThat(trades.getlastID()).isEqualTo(99518);
+    assertThat(trades.getlastID()).isEqualTo("99518");
     // verify all fields filled
     assertThat(trades.getTrades().get(0).getId()).isEqualTo("98519");
     assertThat(trades.getTrades().get(0).getPrice().toString()).isEqualTo("1015");

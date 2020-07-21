@@ -8,13 +8,13 @@ public class ItBitTrade {
   private final BigDecimal amount;
   private final String timestamp;
   private final BigDecimal price;
-  private final long matchNumber;
+  private final String matchNumber;
 
   public ItBitTrade(
       @JsonProperty("amount") BigDecimal amount,
       @JsonProperty("timestamp") String timestamp,
       @JsonProperty("price") BigDecimal price,
-      @JsonProperty("matchNumber") long matchNumber) {
+      @JsonProperty("matchNumber") String matchNumber) {
 
     this.amount = amount;
     this.timestamp = timestamp;
@@ -37,7 +37,7 @@ public class ItBitTrade {
     return price;
   }
 
-  public long getMatchNumber() {
+  public String getMatchNumber() {
 
     return matchNumber;
   }
