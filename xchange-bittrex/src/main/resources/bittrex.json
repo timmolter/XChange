@@ -3,507 +3,517 @@
     "ADA/BTC": {
       "price_scale": 8,
       "min_amount": 25.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ADA/ETH": {
       "price_scale": 8,
       "min_amount": 25.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ADA/USDT": {
       "price_scale": 8,
       "min_amount": 25.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "AMP/BTC": {
       "price_scale": 8,
       "min_amount": 15.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ARK/BTC": {
       "price_scale": 8,
       "min_amount": 1.75000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "BCH/BTC": {
       "price_scale": 8,
       "min_amount": 0.00600000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "BCH/ETH": {
       "price_scale": 8,
       "min_amount": 0.00600000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "BCH/USDT": {
       "price_scale": 8,
       "min_amount": 0.00600000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "BCY/BTC": {
       "price_scale": 8,
       "min_amount": 18.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "BLK/BTC": {
       "price_scale": 8,
       "min_amount": 20.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "BTC/USDT": {
       "price_scale": 8,
       "min_amount": 0.00055000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "BTG/BTC": {
       "price_scale": 8,
       "min_amount": 0.07000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "BTG/ETH": {
       "price_scale": 8,
       "min_amount": 0.07000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "BTG/USDT": {
       "price_scale": 8,
       "min_amount": 0.07000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "DASH/BTC": {
       "price_scale": 8,
       "min_amount": 0.01200000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "DASH/ETH": {
       "price_scale": 8,
       "min_amount": 0.01200000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "DASH/USDT": {
       "price_scale": 8,
       "min_amount": 0.01200000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "DCR/BTC": {
       "price_scale": 8,
       "min_amount": 0.06000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "DGB/BTC": {
       "price_scale": 8,
       "min_amount": 230.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "DGB/ETH": {
       "price_scale": 8,
       "min_amount": 230.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "DMT/BTC": {
       "price_scale": 8,
       "min_amount": 13.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "DMT/ETH": {
       "price_scale": 8,
       "min_amount": 13.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "DOGE/BTC": {
       "price_scale": 8,
       "min_amount": 1600.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "EMC2/BTC": {
       "price_scale": 8,
       "min_amount": 30.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "EOS/BTC": {
       "price_scale": 8,
       "min_amount": 1.5,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "EOS/ETH": {
       "price_scale": 8,
       "min_amount": 1.0,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ETC/BTC": {
       "price_scale": 8,
       "min_amount": 0.30000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ETC/ETH": {
       "price_scale": 8,
       "min_amount": 0.30000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ETC/USDT": {
       "price_scale": 8,
       "min_amount": 0.30000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ETH/BTC": {
       "price_scale": 8,
       "min_amount": 0.00860000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ETH/USDT": {
       "price_scale": 8,
       "min_amount": 0.00860000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "FCT/BTC": {
       "price_scale": 8,
       "min_amount": 0.25000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "FCT/ETH": {
       "price_scale": 8,
       "min_amount": 0.25000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "GAME/BTC": {
       "price_scale": 8,
       "min_amount": 3.50000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "GRS/BTC": {
       "price_scale": 8,
       "min_amount": 4.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "IOC/BTC": {
       "price_scale": 8,
       "min_amount": 4.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "LTC/BTC": {
       "price_scale": 8,
       "min_amount": 0.03500000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "LTC/ETH": {
       "price_scale": 8,
       "min_amount": 0.03500000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "LTC/USDT": {
       "price_scale": 8,
       "min_amount": 0.03500000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "LRC/BTC": {
       "price_scale": 8,
       "min_amount": 7.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "LSK/BTC": {
       "price_scale": 8,
       "min_amount": 0.50000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "MCO/BTC": {
       "price_scale": 8,
       "min_amount": 0.50000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "MCO/ETH": {
       "price_scale": 8,
       "min_amount": 0.50000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "NEO/BTC": {
       "price_scale": 8,
       "min_amount": 0.07000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "NEO/ETH": {
       "price_scale": 8,
       "min_amount": 0.07000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "NEO/USDT": {
       "price_scale": 8,
       "min_amount": 0.07000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "OMG/BTC": {
       "price_scale": 8,
       "min_amount": 0.50000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "OMG/ETH": {
       "price_scale": 8,
       "min_amount": 0.50000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "OMG/USDT": {
       "price_scale": 8,
       "min_amount": 0.50000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "PART/BTC": {
       "price_scale": 8,
       "min_amount": 0.40000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "PAY/BTC": {
       "price_scale": 8,
       "min_amount": 4.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "PAY/ETH": {
       "price_scale": 8,
       "min_amount": 4.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "POLY/BTC": {
       "price_scale": 8,
       "min_amount": 6.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "POLY/ETH": {
       "price_scale": 8,
       "min_amount": 6.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "POWR/BTC": {
       "price_scale": 8,
       "min_amount": 12.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "POWR/ETH": {
       "price_scale": 8,
       "min_amount": 12.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "PPC/BTC": {
       "price_scale": 8,
       "min_amount": 3.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "REP/BTC": {
       "price_scale": 8,
       "min_amount": 0.10000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "REP/ETH": {
       "price_scale": 8,
       "min_amount": 0.10000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "RDD/BTC": {
       "price_scale": 8,
       "min_amount": 600.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "RVN/BTC": {
       "price_scale": 8,
       "min_amount": 150.0,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "STEEM/BTC": {
       "price_scale": 8,
       "min_amount": 2.50000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "SC/BTC": {
       "price_scale": 8,
       "min_amount": 430.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "SC/ETH": {
       "price_scale": 8,
       "min_amount": 430.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "SC/USDT": {
       "price_scale": 8,
       "min_amount": 430.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "SRN/BTC": {
       "price_scale": 8,
       "min_amount": 15.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "SRN/ETH": {
       "price_scale": 8,
       "min_amount": 15.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "STORM/BTC": {
       "price_scale": 8,
       "min_amount": 120.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "STORM/ETH": {
       "price_scale": 8,
       "min_amount": 120.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "STRAT/BTC": {
       "price_scale": 8,
       "min_amount": 0.10000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "STRAT/ETH": {
       "price_scale": 8,
       "min_amount": 0.10000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "SYS/BTC": {
       "price_scale": 8,
       "min_amount": 12.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "TRX/BTC": {
       "price_scale": 8,
       "min_amount": 80.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "TRX/ETH": {
       "price_scale": 8,
       "min_amount": 80.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "TRX/USDT": {
       "price_scale": 8,
       "min_amount": 80.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "VIB/BTC": {
       "price_scale": 8,
       "min_amount": 20.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "VIB/ETH": {
       "price_scale": 8,
       "min_amount": 20.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "VTC/BTC": {
       "price_scale": 8,
       "min_amount": 2.50000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "WAVES/BTC": {
       "price_scale": 8,
       "min_amount": 0.80000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "WAVES/ETH": {
       "price_scale": 8,
       "min_amount": 0.80000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "WAX/BTC": {
       "price_scale": 8,
       "min_amount": 20.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "WAX/ETH": {
       "price_scale": 8,
       "min_amount": 20.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XCP/BTC": {
       "price_scale": 8,
       "min_amount": 0.50000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XEM/BTC": {
       "price_scale": 8,
       "min_amount": 1.20000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XEM/ETH": {
       "price_scale": 8,
       "min_amount": 1.20000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XLM/BTC": {
       "price_scale": 8,
       "min_amount": 25.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XLM/ETH": {
       "price_scale": 8,
       "min_amount": 25.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XMR/BTC": {
       "price_scale": 8,
       "min_amount": 0.01800000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XMR/ETH": {
       "price_scale": 8,
       "min_amount": 0.01800000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XMR/USDT": {
       "price_scale": 8,
       "min_amount": 0.01800000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XRP/BTC": {
       "price_scale": 8,
       "min_amount": 7.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XRP/ETH": {
       "price_scale": 8,
       "min_amount": 7.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XRP/USDT": {
       "price_scale": 8,
       "min_amount": 7.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XVG/BTC": {
       "price_scale": 8,
       "min_amount": 160.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "XVG/USDT": {
       "price_scale": 8,
       "min_amount": 160.00000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ZEC/BTC": {
       "price_scale": 8,
       "min_amount": 0.01800000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ZEC/ETH": {
       "price_scale": 8,
       "min_amount": 0.01800000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ZEC/USDT": {
       "price_scale": 8,
       "min_amount": 0.01800000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ZCL/BTC": {
       "price_scale": 8,
       "min_amount": 0.35000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ZRX/BTC": {
       "price_scale": 8,
       "min_amount": 0.30000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
     },
     "ZRX/ETH": {
       "price_scale": 8,
       "min_amount": 0.30000000,
-      "trading_fee": 0.0025
+      "trading_fee": 0.0075
+    },
+    "ETH/EUR": {
+      "price_scale": 8,
+      "min_amount": 0.024,
+      "trading_fee": 0.0075
+    },
+    "BTC/EUR": {
+      "price_scale": 8,
+      "min_amount": 0.00045,
+      "trading_fee": 0.0075
     }
   },
   "currencies": {
