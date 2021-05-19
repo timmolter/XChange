@@ -6,12 +6,9 @@ import com.google.common.collect.Streams;
 import info.bitrich.xchangestream.ftx.dto.FtxOrderbookResponse;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.zip.CRC32;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.trade.LimitOrder;
@@ -80,15 +77,6 @@ public class FtxStreamingAdapters {
                                     .originalAmount(bid.get(1))
                                     .build()));
               }
-
-              if (orderBook.getAsks().size() > 0 && orderBook.getBids().size() > 0) {
-                Long calculatedChecksum =
-                    getOrderbookChecksum(orderBook.getAsks(), orderBook.getBids());
-
-                if (!calculatedChecksum.equals(message.getChecksum())) {
-                  throw new RuntimeException("Checksum is not correct!");
-                }
-              }
             });
 
     return new OrderBook(
@@ -98,30 +86,4 @@ public class FtxStreamingAdapters {
         true);
   }
 
-  public static Long getOrderbookChecksum(List<LimitOrder> asks, List<LimitOrder> bids) {
-    StringBuilder data = new StringBuilder(3072);
-
-    for (int i = 0; i < 100; i++) {
-      if (bids.size() >= i) {
-        data.append(bids.get(i).getLimitPrice().doubleValue())
-            .append(":")
-            .append(bids.get(i).getOriginalAmount().doubleValue());
-      }
-      data.append(":");
-      if (asks.size() >= i) {
-        data.append(asks.get(i).getLimitPrice().doubleValue())
-            .append(":")
-            .append(asks.get(i).getOriginalAmount().doubleValue());
-      }
-      if (i != 99) {
-        data.append(":");
-      }
-    }
-
-    CRC32 crc32 = new CRC32();
-    byte[] toBytes = data.toString().getBytes(StandardCharsets.UTF_8);
-    crc32.update(toBytes, 0, toBytes.length);
-
-    return crc32.getValue();
-  }
 }
