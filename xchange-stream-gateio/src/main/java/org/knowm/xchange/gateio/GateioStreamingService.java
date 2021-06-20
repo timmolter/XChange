@@ -1,9 +1,11 @@
+package org.knowm.xchange.gateio;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dto.GateioWebSocketSubscriptionMessage;
-import dto.response.GateioOrderBookResponse;
-import dto.response.GateioTradesResponse;
-import dto.response.GateioWebSocketTransaction;
+import org.knowm.xchange.gateio.dto.GateioWebSocketSubscriptionMessage;
+import org.knowm.xchange.gateio.dto.response.GateioOrderBookResponse;
+import org.knowm.xchange.gateio.dto.response.GateioTradesResponse;
+import org.knowm.xchange.gateio.dto.response.GateioWebSocketTransaction;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.service.netty.JsonNettyStreamingService;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;

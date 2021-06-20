@@ -1,3 +1,6 @@
+package org.knowm.xchange.gateio;
+
+import org.knowm.xchange.gateio.GateioStreamingExchange;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.core.StreamingExchangeFactory;
 import io.reactivex.disposables.Disposable;

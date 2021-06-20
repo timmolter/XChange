@@ -1,4 +1,4 @@
-package dto.response;
+package org.knowm.xchange.gateio.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

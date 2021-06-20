@@ -1,7 +1,7 @@
-package dto;
+package org.knowm.xchange.gateio.dto;
 
 import com.google.common.io.CharStreams;
-import dto.response.GateioTradesResponse;
+import org.knowm.xchange.gateio.dto.response.GateioTradesResponse;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
 import org.junit.Assert;
 import org.junit.Test;

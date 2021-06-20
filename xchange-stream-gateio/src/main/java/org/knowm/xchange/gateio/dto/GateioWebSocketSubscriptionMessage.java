@@ -1,4 +1,4 @@
-package dto;
+package org.knowm.xchange.gateio.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
@@ -40,9 +40,11 @@ public class GateioWebSocketSubscriptionMessage {
     this.event = event;
     this.payload =
         Arrays.asList(
-                currencyPair.toString().replace('/', '_'),
-                depth != null ? Integer.toString(depth) : null,
-                interval != null ? interval + "ms" : null)
+                currencyPair.toString().replace('/', '_')
+//                ,
+//                depth != null ? Integer.toString(depth) : null,
+//                interval != null ? interval + "ms" : null
+        )
             .stream()
             .filter(Objects::nonNull)
             .collect(Collectors.toList())

@@ -1,5 +1,7 @@
-import dto.response.GateioOrderBookResponse;
-import dto.response.GateioTradesResponse;
+package org.knowm.xchange.gateio;
+
+import org.knowm.xchange.gateio.dto.response.GateioOrderBookResponse;
+import org.knowm.xchange.gateio.dto.response.GateioTradesResponse;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import io.reactivex.Observable;
 import org.knowm.xchange.currency.CurrencyPair;
