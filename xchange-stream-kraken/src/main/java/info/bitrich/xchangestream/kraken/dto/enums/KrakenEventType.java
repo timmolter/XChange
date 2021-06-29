@@ -12,7 +12,11 @@ public enum KrakenEventType {
   pingStatus,
   ping,
   pong,
-  error;
+  error,
+  addOrder,
+  addOrderStatus,
+  cancelOrder,
+  cancelOrderStatus;
 
   public static KrakenEventType getEvent(String event) {
     return Arrays.stream(KrakenEventType.values())

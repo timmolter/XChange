@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import info.bitrich.xchangestream.core.StreamingTradeService;
 import info.bitrich.xchangestream.kraken.dto.KrakenOpenOrder;
 import info.bitrich.xchangestream.kraken.dto.KrakenOwnTrade;
+import info.bitrich.xchangestream.kraken.dto.KrakenStreamingCancelOrder;
+import info.bitrich.xchangestream.kraken.dto.KrakenStreamingLimitOrder;
 import info.bitrich.xchangestream.kraken.dto.enums.KrakenSubscriptionName;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
 import io.reactivex.Observable;
@@ -79,6 +81,14 @@ public class KrakenStreamingTradeService implements StreamingTradeService {
     } catch (Exception e) {
       return Observable.error(e);
     }
+  }
+
+  public String submitLimitOrder(LimitOrder order) {
+    return streamingService.submitLimitOrder(new KrakenStreamingLimitOrder(order));
+  }
+
+  public Boolean cancelOrder(String orderId, Integer reqid) {
+    return streamingService.cancelOrder(new KrakenStreamingCancelOrder(orderId, reqid));
   }
 
   private Iterable<Order> adaptKrakenOrders(KrakenDtoOrderHolder[] dtoList) {

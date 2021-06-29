@@ -1,14 +1,15 @@
 package info.bitrich.xchangestream.kraken;
 
+import static info.bitrich.xchangestream.kraken.dto.enums.KrakenEventType.addOrderStatus;
+import static info.bitrich.xchangestream.kraken.dto.enums.KrakenEventType.cancelOrderStatus;
 import static info.bitrich.xchangestream.kraken.dto.enums.KrakenEventType.subscribe;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import info.bitrich.xchangestream.kraken.dto.KrakenSubscriptionConfig;
-import info.bitrich.xchangestream.kraken.dto.KrakenSubscriptionMessage;
-import info.bitrich.xchangestream.kraken.dto.KrakenSubscriptionStatusMessage;
-import info.bitrich.xchangestream.kraken.dto.KrakenSystemStatus;
+import info.bitrich.xchangestream.kraken.dto.*;
+import info.bitrich.xchangestream.kraken.dto.enums.KrakenAddOrderStatus;
+import info.bitrich.xchangestream.kraken.dto.enums.KrakenCancelOrderStatus;
 import info.bitrich.xchangestream.kraken.dto.enums.KrakenEventType;
 import info.bitrich.xchangestream.kraken.dto.enums.KrakenSubscriptionName;
 import info.bitrich.xchangestream.service.netty.JsonNettyStreamingService;
@@ -21,17 +22,22 @@ import io.netty.handler.codec.http.websocketx.extensions.WebSocketClientExtensio
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
 import org.apache.commons.lang3.StringUtils;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.kraken.dto.account.KrakenWebsocketToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** @author makarid, pchertalev */
+/** @author makarid, pchertalev, marcinrabiej */
 public class KrakenStreamingService extends JsonNettyStreamingService {
   private static final Logger LOG = LoggerFactory.getLogger(KrakenStreamingService.class);
   private static final String EVENT = "event";
@@ -40,6 +46,11 @@ public class KrakenStreamingService extends JsonNettyStreamingService {
   private final boolean isPrivate;
   private final Supplier<KrakenWebsocketToken> authData;
   private final Map<Integer, String> subscriptionRequestMap = new ConcurrentHashMap<>();
+  private final Map<Integer, ObservableEmitter<KrakenAddOrderStatusMessage>>
+          addOrderStatusEmitters = new ConcurrentHashMap<>();
+
+  private final Map<Integer, ObservableEmitter<KrakenCancelOrderStatusMessage>>
+          cancelOrderStatusEmitters = new ConcurrentHashMap<>();
 
   public KrakenStreamingService(
       boolean isPrivate, String uri, final Supplier<KrakenWebsocketToken> authData) {
@@ -118,6 +129,16 @@ public class KrakenStreamingService extends JsonNettyStreamingService {
                   throw new ExchangeException("Issue with session validity");
                 }
             }
+            break;
+          case addOrderStatus:
+            LOG.info("addOrderStatus: {}", message);
+            handleAddOrderStatusMessage(
+                    mapper.treeToValue(message, KrakenAddOrderStatusMessage.class));
+            break;
+          case cancelOrderStatus:
+            LOG.info("cancelOrderStatus: {}", message);
+            handleCancelOrderStatusMessage(
+                    mapper.treeToValue(message, KrakenCancelOrderStatusMessage.class));
             break;
           case error:
             LOG.error(
@@ -240,6 +261,90 @@ public class KrakenStreamingService extends JsonNettyStreamingService {
   }
 
   private final WebSocketClientHandler.WebSocketMessageHandler channelInactiveHandler = null;
+
+  String submitLimitOrder(KrakenStreamingLimitOrder krakenStreamingLimitOrder) {
+    krakenStreamingLimitOrder.setToken(authData.get().getToken());
+    Observable<KrakenAddOrderStatusMessage> responseObservable;
+    responseObservable =
+            Observable.create(
+                    (e) -> addOrderStatusEmitters.put(krakenStreamingLimitOrder.getReqid(), e));
+    sendObjectMessage(krakenStreamingLimitOrder);
+    KrakenAddOrderStatusMessage addOrderStatusMessage =
+            responseObservable
+                    .timeout(60, TimeUnit.SECONDS, getAddOrderTimeoutObservable(krakenStreamingLimitOrder))
+                    .blockingFirst();
+    if (addOrderStatusMessage.getStatus() == KrakenAddOrderStatus.ok) {
+      return addOrderStatusMessage.getTxid();
+    } else {
+      throw new RuntimeException(addOrderStatusMessage.getErrorMessage());
+    }
+  }
+
+  Boolean cancelOrder(KrakenStreamingCancelOrder krakenStreamingCancelOrder) {
+    krakenStreamingCancelOrder.setToken(authData.get().getToken());
+    Observable<KrakenCancelOrderStatusMessage> responseObservable;
+    responseObservable =
+            Observable.create(
+                    (e) -> cancelOrderStatusEmitters.put(krakenStreamingCancelOrder.getReqid(), e));
+    sendObjectMessage(krakenStreamingCancelOrder);
+    KrakenCancelOrderStatusMessage cancelOrderStatusMessage =
+            responseObservable
+                    .timeout(
+                            1, TimeUnit.SECONDS, getCancelOrderTimeoutObservable(krakenStreamingCancelOrder))
+                    .blockingFirst();
+    if (cancelOrderStatusMessage.getStatus() == KrakenCancelOrderStatus.ok) {
+      return true;
+    } else {
+      throw new RuntimeException(cancelOrderStatusMessage.getErrorMessage());
+    }
+  }
+
+
+  private Observable<KrakenAddOrderStatusMessage> getAddOrderTimeoutObservable(
+          KrakenStreamingLimitOrder krakenStreamingLimitOrder) {
+    return Observable.fromCallable(
+            () -> {
+              addOrderStatusEmitters.remove(krakenStreamingLimitOrder.getReqid());
+              return new KrakenAddOrderStatusMessage(
+                      addOrderStatus,
+                      null,
+                      KrakenAddOrderStatus.error,
+                      null,
+                      krakenStreamingLimitOrder.getReqid(),
+                      "TIMEOUT: No response in 60 seconds");
+            });
+  }
+
+
+  private Observable<KrakenCancelOrderStatusMessage> getCancelOrderTimeoutObservable(
+          KrakenStreamingCancelOrder krakenStreamingCancelOrder) {
+    return Observable.fromCallable(
+            () -> {
+              cancelOrderStatusEmitters.remove(krakenStreamingCancelOrder.getReqid());
+              return new KrakenCancelOrderStatusMessage(
+                      cancelOrderStatus,
+                      KrakenCancelOrderStatus.error,
+                      krakenStreamingCancelOrder.getReqid(),
+                      "TIMEOUT: No response in 1 second");
+            });
+  }
+  private void handleCancelOrderStatusMessage(
+          KrakenCancelOrderStatusMessage krakenCancelOrderStatusMessage) {
+    ObservableEmitter<KrakenCancelOrderStatusMessage> cancelOrderStatusMessageObservableEmitter =
+            cancelOrderStatusEmitters.get(krakenCancelOrderStatusMessage.getReqid());
+    if (cancelOrderStatusMessageObservableEmitter != null) {
+      cancelOrderStatusMessageObservableEmitter.onNext(krakenCancelOrderStatusMessage);
+    }
+  }
+
+  private void handleAddOrderStatusMessage(
+          KrakenAddOrderStatusMessage krakenAddOrderStatusMessage) {
+    ObservableEmitter<KrakenAddOrderStatusMessage> addOrderStatusMessageObservableEmitter =
+            addOrderStatusEmitters.get(krakenAddOrderStatusMessage.getReqid());
+    if (addOrderStatusMessageObservableEmitter != null) {
+      addOrderStatusMessageObservableEmitter.onNext(krakenAddOrderStatusMessage);
+    }
+  }
 
   /**
    * Custom client handler in order to execute an external, user-provided handler on channel events.
