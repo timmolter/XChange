@@ -7,7 +7,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import lombok.Value;
+
+import org.apache.commons.lang3.StringUtils;
 import org.knowm.xchange.binance.BinanceAdapters;
 import org.knowm.xchange.binance.BinanceAuthenticated;
 import org.knowm.xchange.binance.BinanceErrorAdapter;
@@ -48,6 +49,8 @@ import org.knowm.xchange.service.trade.params.orders.OpenOrdersParams;
 import org.knowm.xchange.service.trade.params.orders.OrderQueryParamCurrencyPair;
 import org.knowm.xchange.service.trade.params.orders.OrderQueryParams;
 import org.knowm.xchange.utils.Assert;
+
+import lombok.Value;
 
 public class BinanceTradeService extends BinanceTradeServiceRaw implements TradeService {
 
@@ -304,6 +307,14 @@ public class BinanceTradeService extends BinanceTradeServiceRaw implements Trade
     throw new NotAvailableFromExchangeException();
   }
 
+  /**
+   * This can be an expensive call to make with accounts with several thousand trades. Because Binance's API doesn't provide the trade fees
+   * associated with an order nor a built-in way to obtain the trades associated with an order,
+   * a separate, paginating API call is made to the trade history endpoint to obtain that information.
+   * 
+   * @param Order Query parameters
+   * @return Collection of Orders
+   */
   @Override
   public Collection<Order> getOrder(OrderQueryParams... params) throws IOException {
     try {
@@ -321,12 +332,39 @@ public class BinanceTradeService extends BinanceTradeServiceRaw implements Trade
               "You need to provide the currency pair and the order id to query an order.");
         }
 
-        orders.add(
-            BinanceAdapters.adaptOrder(
-                super.orderStatus(
-                    orderQueryParamCurrencyPair.getCurrencyPair(),
-                    BinanceAdapters.id(orderQueryParamCurrencyPair.getOrderId()),
-                    null)));
+        Order order = BinanceAdapters.adaptOrder(
+                        super.orderStatus(
+                          orderQueryParamCurrencyPair.getCurrencyPair(),
+                          BinanceAdapters.id(orderQueryParamCurrencyPair.getOrderId()),
+                          null
+                        )
+                      );
+
+        // Calculate fees by collecting trades associated with this order
+        BinanceTradeHistoryParams tradeHistParams = new BinanceTradeHistoryParams(orderQueryParamCurrencyPair.getCurrencyPair());
+        UserTrades tradeHist = getTradeHistory(tradeHistParams);
+        BigDecimal fee = null;
+        if (tradeHist.getUserTrades() != null) {
+          // Paginate until no more trades or when the order's base currency amount is fully filled
+          BigDecimal executedQty = BigDecimal.ZERO;
+          while (tradeHist.getUserTrades().size() > 0 && order.getOriginalAmount().compareTo(executedQty) != 0) {
+            List<UserTrade> tradeHistory = tradeHist.getUserTrades().stream()
+              .filter(trade -> StringUtils.equals(param.getOrderId(), trade.getOrderId()))
+              .collect(Collectors.toList());
+            for (UserTrade trade : tradeHistory) {
+              executedQty = executedQty.add(trade.getOriginalAmount());
+              if (fee == null) {
+                fee = BigDecimal.ZERO;
+              }
+              fee = fee.add(trade.getFeeAmount());
+            }
+            tradeHistParams.setStartId(String.valueOf(tradeHist.getlastID() + 1));
+            tradeHistParams.setLimit(1000); // increase query limit to 1000
+            tradeHist = getTradeHistory(tradeHistParams);
+          }
+        }
+        order.setFee(fee);
+        orders.add(order);
       }
       return orders;
     } catch (BinanceException e) {

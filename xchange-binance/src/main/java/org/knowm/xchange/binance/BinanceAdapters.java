@@ -2,8 +2,11 @@ package org.knowm.xchange.binance;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.knowm.xchange.binance.dto.account.AssetDetail;
 import org.knowm.xchange.binance.dto.marketdata.BinancePriceQuantity;
 import org.knowm.xchange.binance.dto.trade.BinanceOrder;
@@ -122,6 +125,7 @@ public class BinanceAdapters {
           symbol.substring(0, pairLength - 3), symbol.substring(pairLength - 3));
     }
   }
+
 
   public static Order adaptOrder(BinanceOrder order) {
     OrderType type = convert(order.side);
