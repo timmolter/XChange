@@ -1,6 +1,7 @@
 package org.knowm.xchange.simulated;
 
 import static java.math.BigDecimal.ZERO;
+import static org.knowm.xchange.dto.Order.OrderType.ASK;
 
 import com.google.common.collect.Collections2;
 import java.math.BigDecimal;
@@ -59,7 +60,9 @@ class Account {
       throw new FundsExceededException(
           "Insufficient balance: "
               + amount.toPlainString()
-              + order.getCurrencyPair().base
+              + (order.getType() == ASK
+                  ? order.getCurrencyPair().base
+                  : order.getCurrencyPair().counter)
               + " required but only "
               + balance.getAvailable()
               + " available");

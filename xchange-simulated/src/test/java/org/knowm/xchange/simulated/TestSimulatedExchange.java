@@ -14,6 +14,7 @@ import static org.knowm.xchange.simulated.SimulatedExchange.ENGINE_FACTORY_PARAM
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;
@@ -358,6 +359,18 @@ public class TestSimulatedExchange {
     assertThat(baseBalance.getTotal()).isEqualTo(INITIAL_BALANCE);
     assertThat(baseBalance.getFrozen()).isEqualTo(ZERO);
     assertThat(baseBalance.getAvailable()).isEqualTo(INITIAL_BALANCE);
+  }
+
+  @Test
+  public void testGetTickers() throws IOException {
+    // When
+    exchange
+        .getTradeService()
+        .placeMarketOrder(
+            new MarketOrder.Builder(BID, BTC_USD).originalAmount(new BigDecimal("0.56")).build());
+    Ticker ticker = exchange.getMarketDataService().getTicker(BTC_USD);
+    List<Ticker> tickers = exchange.getMarketDataService().getTickers(null);
+    assertThat(tickers).hasSize(1).contains(ticker);
   }
 
   private OpenOrders getOpenOrders() throws IOException {

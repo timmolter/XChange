@@ -33,7 +33,7 @@
     <version.java>1.8</version.java>
     <version.assertj>3.20.2</version.assertj>
     <version.commons.lang3>3.12.0</version.commons.lang3>
-    <version.fasterxml>2.12.3</version.fasterxml>
+    <version.fasterxml>2.11.3</version.fasterxml>
     <version.github.mmazi>2.1.0</version.github.mmazi>
     <version.resilience4j>1.7.0</version.resilience4j>
     <version.junit>4.13.2</version.junit>
@@ -186,7 +186,7 @@
     <module>xchange-zaif</module>
     <module>xchange-enigma</module>
 
-
+    <module>xchange-stream-simulated</module>
     <module>xchange-stream-bankera</module>
     <module>xchange-stream-binance</module>
     <module>xchange-stream-bitfinex</module>

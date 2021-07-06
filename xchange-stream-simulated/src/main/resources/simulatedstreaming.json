@@ -1,0 +1,25 @@
+{
+  "currency_pairs": {
+    "BTC/USD": {
+      "price_scale": 2,
+      "min_amount": 0.0001
+    }
+  },
+  "currencies": {
+    "BTC": {
+      "scale": 8,
+      "withdrawal_fee": 0.2
+    },
+    "USD": {
+      "scale": 2,
+      "withdrawal_fee": 0
+    }
+  },
+  "public_rate_limits": [
+    {
+      "calls": 5,
+      "time_span": 1,
+      "time_unit": "SECONDS"
+    }
+  ]
+}
