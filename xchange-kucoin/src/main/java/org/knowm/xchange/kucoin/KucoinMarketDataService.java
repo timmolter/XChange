@@ -19,7 +19,7 @@ public class KucoinMarketDataService extends KucoinMarketDataServiceRaw
    */
   public static final String PARAM_FULL_ORDERBOOK = "Full_Orderbook";
 
-  KucoinMarketDataService(KucoinExchange exchange) {
+  protected KucoinMarketDataService(KucoinExchange exchange) {
     super(exchange);
   }
 

@@ -16,6 +16,7 @@ public class KucoinBaseService extends BaseExchangeService<KucoinExchange> imple
   protected final WithdrawalAPI withdrawalAPI;
   protected final DepositAPI depositAPI;
   protected final OrderAPI orderApi;
+  protected final LimitOrderAPI limitOrderAPI;
   protected final FillAPI fillApi;
   protected final HistOrdersAPI histOrdersApi;
   protected final WebsocketAPI websocketAPI;
@@ -35,6 +36,7 @@ public class KucoinBaseService extends BaseExchangeService<KucoinExchange> imple
     this.withdrawalAPI = service(exchange, WithdrawalAPI.class);
     this.depositAPI = service(exchange, DepositAPI.class);
     this.orderApi = service(exchange, OrderAPI.class);
+    this.limitOrderAPI = service(exchange, LimitOrderAPI.class);
     this.fillApi = service(exchange, FillAPI.class);
     this.histOrdersApi = service(exchange, HistOrdersAPI.class);
     this.websocketAPI = service(exchange, WebsocketAPI.class);

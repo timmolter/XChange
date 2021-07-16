@@ -3,10 +3,15 @@ package org.knowm.xchange.kucoin;
 import static org.knowm.xchange.kucoin.KucoinExceptionClassifier.classifyingExceptions;
 
 import java.io.IOException;
+import java.util.List;
+
 import org.knowm.xchange.BaseExchange;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.exceptions.ExchangeException;
+import org.knowm.xchange.kucoin.dto.response.CurrenciesResponse;
+import org.knowm.xchange.kucoin.dto.response.SymbolResponse;
+import org.knowm.xchange.kucoin.dto.response.TradeFeeResponse;
 import org.knowm.xchange.kucoin.dto.response.WebsocketResponse;
 
 public class KucoinExchange extends BaseExchange implements Exchange {
@@ -63,8 +68,18 @@ public class KucoinExchange extends BaseExchange implements Exchange {
 
   @Override
   public void remoteInit() throws IOException, ExchangeException {
+
+    // fetch fee only if authenticated
+    TradeFeeResponse fee = null;
+    if (exchangeSpecification.getApiKey() != null) {
+      fee = getMarketDataService().getKucoinBaseFee();
+    }
+
+    List<CurrenciesResponse> currenciesResponses = getMarketDataService().getKucoinCurrencies();
+    List<SymbolResponse> symbolsResponse = getMarketDataService().getKucoinSymbols();
+
     this.exchangeMetaData =
-        KucoinAdapters.adaptMetadata(this.exchangeMetaData, getMarketDataService());
+        KucoinAdapters.adaptMetadata(this.exchangeMetaData, currenciesResponses, symbolsResponse, fee);
   }
 
   @Override

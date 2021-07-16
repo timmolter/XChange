@@ -10,6 +10,7 @@ import org.knowm.xchange.kucoin.dto.request.InnerTransferRequest;
 import org.knowm.xchange.kucoin.dto.response.AccountBalancesResponse;
 import org.knowm.xchange.kucoin.dto.response.AccountLedgersResponse;
 import org.knowm.xchange.kucoin.dto.response.ApplyWithdrawResponse;
+import org.knowm.xchange.kucoin.dto.response.DepositAddressResponse;
 import org.knowm.xchange.kucoin.dto.response.DepositResponse;
 import org.knowm.xchange.kucoin.dto.response.InternalTransferResponse;
 import org.knowm.xchange.kucoin.dto.response.Pagination;
@@ -116,4 +117,49 @@ public class KucoinAccountServiceRaw extends KucoinBaseService {
                 pageSize,
                 currentPage));
   }
+
+  public DepositAddressResponse createDepositAddress(
+          String currency, String chain)
+          throws IOException {
+    checkAuthenticated();
+    return classifyingExceptions(
+            () ->
+                    depositAPI.createDepositAddress(
+                            apiKey,
+                            digest,
+                            nonceFactory,
+                            passphrase,
+                            currency,
+                            chain));
+  }
+
+  public DepositAddressResponse getDepositAddress(
+          String currency, String chain)
+          throws IOException {
+    checkAuthenticated();
+    return classifyingExceptions(
+            () ->
+                    depositAPI.getDepositAddress(
+                            apiKey,
+                            digest,
+                            nonceFactory,
+                            passphrase,
+                            currency,
+                            chain));
+  }
+
+  public List<DepositAddressResponse> getDepositAddresses(
+          String currency)
+          throws IOException {
+    checkAuthenticated();
+    return classifyingExceptions(
+            () ->
+                    depositAPI.getDepositAddresses(
+                            apiKey,
+                            digest,
+                            nonceFactory,
+                            passphrase,
+                            currency));
+  }
+
 }
