@@ -62,7 +62,7 @@ public class CoinbaseProExchangeIntegration {
     CoinbaseProTrades trades1 =
         marketDataServiceRaw.getCoinbaseProTradesExtended(
             currencyPair, new Long(Integer.MAX_VALUE), null);
-    assertEquals("Unexpected trades list length (100)", 100, trades1.size());
+    assertEquals("Unexpected trades list length (1000)", 1000, trades1.size());
 
     // get latest 10 trades
     CoinbaseProTrades trades2 =

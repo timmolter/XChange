@@ -22,6 +22,7 @@ import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProProductStats;
 import org.knowm.xchange.coinbasepro.dto.marketdata.CoinbaseProProductTicker;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProFill;
 import org.knowm.xchange.coinbasepro.dto.trade.CoinbaseProOrder;
+import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.Order.OrderType;
@@ -369,6 +370,20 @@ public class CoinbaseProAdaptersTest {
     assertThat(openOrders.getHiddenOrders()).hasSize(1);
     assertStopOrderFilled(openOrders.getHiddenOrders().get(0));
     assertLimitOrderPending(openOrders.getOpenOrders().get(0));
+  }
+
+  @Test
+  public void testAdaptProductID() {
+    String productID = CoinbaseProAdapters.adaptProductID(CurrencyPair.ETH_BTC);
+
+    assertThat(productID).isEqualTo(Currency.ETH + "-" + Currency.BTC);
+  }
+
+  @Test
+  public void testAdaptProductIDHandlesNull() {
+    String productID = CoinbaseProAdapters.adaptProductID(null);
+
+    assertThat(productID).isEqualTo(null);
   }
 
   private void assertStopOrderFilled(final Order order) {

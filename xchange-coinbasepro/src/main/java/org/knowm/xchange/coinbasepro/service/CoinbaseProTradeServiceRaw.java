@@ -37,6 +37,25 @@ public class CoinbaseProTradeServiceRaw extends CoinbaseProBaseService {
     }
   }
 
+  /** https://docs.pro.coinbase.com/#list-orders */
+  public CoinbaseProOrder[] getCoinbaseProOpenOrders(String productId) throws IOException {
+    try {
+      return decorateApiCall(
+              () ->
+                      coinbasePro.getListOrders(
+                              apiKey,
+                              digest,
+                              UnixTimestampFactory.INSTANCE.createValue(),
+                              passphrase,
+                              "open",
+                              productId))
+              .withRateLimiter(rateLimiter(PRIVATE_REST_ENDPOINT_RATE_LIMITER))
+              .call();
+    } catch (CoinbaseProException e) {
+      throw handleError(e);
+    }
+  }
+
   /** https://docs.pro.coinbase.com/#fills */
   public CoinbasePagedResponse<CoinbaseProFill> getCoinbaseProFills(
       TradeHistoryParams tradeHistoryParams) throws IOException {
