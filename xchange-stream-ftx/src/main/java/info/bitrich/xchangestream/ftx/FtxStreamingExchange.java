@@ -3,11 +3,13 @@ package info.bitrich.xchangestream.ftx;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
+import info.bitrich.xchangestream.core.StreamingTradeService;
 import info.bitrich.xchangestream.service.netty.ConnectionStateModel;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.ftx.FtxExchange;
+
 
 public class FtxStreamingExchange extends FtxExchange implements StreamingExchange {
 
@@ -15,11 +17,19 @@ public class FtxStreamingExchange extends FtxExchange implements StreamingExchan
 
   private FtxStreamingService ftxStreamingService;
   private FtxStreamingMarketDataService ftxStreamingMarketDataService;
+  private FtxStreamingTradeService ftxStreamingTradeService;
 
   @Override
   protected void initServices() {
     super.initServices();
-    this.ftxStreamingService = new FtxStreamingService(API_URI);
+
+    if (exchangeSpecification.getApiKey() != null) {
+      this.ftxStreamingService = new FtxStreamingService(API_URI, exchangeSpecification);
+      this.ftxStreamingTradeService = new FtxStreamingTradeService(ftxStreamingService);
+    } else {
+      this.ftxStreamingService = new FtxStreamingService(API_URI);
+    }
+
     this.ftxStreamingMarketDataService = new FtxStreamingMarketDataService(ftxStreamingService);
   }
 
@@ -63,6 +73,11 @@ public class FtxStreamingExchange extends FtxExchange implements StreamingExchan
   @Override
   public StreamingMarketDataService getStreamingMarketDataService() {
     return ftxStreamingMarketDataService;
+  }
+
+  @Override
+  public StreamingTradeService getStreamingTradeService() {
+    return ftxStreamingTradeService;
   }
 
   @Override
