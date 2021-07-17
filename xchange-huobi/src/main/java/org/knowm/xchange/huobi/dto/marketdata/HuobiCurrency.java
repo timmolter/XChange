@@ -71,80 +71,160 @@ public class HuobiCurrency {
         return chain;
     }
 
+    public void setChain(String chain) {
+        this.chain = chain;
+    }
+
     public String getDisplayName() {
         return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getBaseChain() {
         return baseChain;
     }
 
+    public void setBaseChain(String baseChain) {
+        this.baseChain = baseChain;
+    }
+
     public String getBaseChainProtocol() {
         return baseChainProtocol;
+    }
+
+    public void setBaseChainProtocol(String baseChainProtocol) {
+        this.baseChainProtocol = baseChainProtocol;
     }
 
     public boolean isDynamic() {
         return isDynamic;
     }
 
+    public void setDynamic(boolean dynamic) {
+        isDynamic = dynamic;
+    }
+
     public String getDepositStatus() {
         return depositStatus;
+    }
+
+    public void setDepositStatus(String depositStatus) {
+        this.depositStatus = depositStatus;
     }
 
     public String getMaxTransactFeeWithdraw() {
         return maxTransactFeeWithdraw;
     }
 
+    public void setMaxTransactFeeWithdraw(String maxTransactFeeWithdraw) {
+        this.maxTransactFeeWithdraw = maxTransactFeeWithdraw;
+    }
+
     public String getMaxWithdrawAmt() {
         return maxWithdrawAmt;
+    }
+
+    public void setMaxWithdrawAmt(String maxWithdrawAmt) {
+        this.maxWithdrawAmt = maxWithdrawAmt;
     }
 
     public String getMinDepositAmt() {
         return minDepositAmt;
     }
 
+    public void setMinDepositAmt(String minDepositAmt) {
+        this.minDepositAmt = minDepositAmt;
+    }
+
     public String getMinTransactFeeWithdraw() {
         return minTransactFeeWithdraw;
+    }
+
+    public void setMinTransactFeeWithdraw(String minTransactFeeWithdraw) {
+        this.minTransactFeeWithdraw = minTransactFeeWithdraw;
     }
 
     public String getMinWithdrawAmt() {
         return minWithdrawAmt;
     }
 
+    public void setMinWithdrawAmt(String minWithdrawAmt) {
+        this.minWithdrawAmt = minWithdrawAmt;
+    }
+
     public int getNumOfConfirmations() {
         return numOfConfirmations;
+    }
+
+    public void setNumOfConfirmations(int numOfConfirmations) {
+        this.numOfConfirmations = numOfConfirmations;
     }
 
     public int getNumOfFastConfirmations() {
         return numOfFastConfirmations;
     }
 
+    public void setNumOfFastConfirmations(int numOfFastConfirmations) {
+        this.numOfFastConfirmations = numOfFastConfirmations;
+    }
+
     public String getTransactFeeWithdraw() {
         return transactFeeWithdraw;
+    }
+
+    public void setTransactFeeWithdraw(String transactFeeWithdraw) {
+        this.transactFeeWithdraw = transactFeeWithdraw;
     }
 
     public String getWithdrawFeeType() {
         return withdrawFeeType;
     }
 
+    public void setWithdrawFeeType(String withdrawFeeType) {
+        this.withdrawFeeType = withdrawFeeType;
+    }
+
     public int getWithdrawPrecision() {
         return withdrawPrecision;
+    }
+
+    public void setWithdrawPrecision(int withdrawPrecision) {
+        this.withdrawPrecision = withdrawPrecision;
     }
 
     public String getWithdrawQuotaPerDay() {
         return withdrawQuotaPerDay;
     }
 
+    public void setWithdrawQuotaPerDay(String withdrawQuotaPerDay) {
+        this.withdrawQuotaPerDay = withdrawQuotaPerDay;
+    }
+
     public String getWithdrawQuotaPerYear() {
         return withdrawQuotaPerYear;
+    }
+
+    public void setWithdrawQuotaPerYear(String withdrawQuotaPerYear) {
+        this.withdrawQuotaPerYear = withdrawQuotaPerYear;
     }
 
     public String getWithdrawQuotaTotal() {
         return withdrawQuotaTotal;
     }
 
+    public void setWithdrawQuotaTotal(String withdrawQuotaTotal) {
+        this.withdrawQuotaTotal = withdrawQuotaTotal;
+    }
+
     public String getWithdrawStatus() {
         return withdrawStatus;
+    }
+
+    public void setWithdrawStatus(String withdrawStatus) {
+        this.withdrawStatus = withdrawStatus;
     }
 
     @Override

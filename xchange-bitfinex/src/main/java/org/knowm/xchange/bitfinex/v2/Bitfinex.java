@@ -26,6 +26,11 @@ import org.knowm.xchange.bitfinex.v2.dto.marketdata.Status;
 public interface Bitfinex {
 
   @GET
+  @Path("platform/status")
+  Integer[] getPlatformStatus()
+          throws IOException, BitfinexExceptionV2;
+
+  @GET
   @Path("tickers")
   List<ArrayNode> getTickers(@QueryParam("symbols") String symbols)
       throws IOException, BitfinexExceptionV2;

@@ -1,35 +1,23 @@
 package org.knowm.xchange.bitfinex.service;
 
-import static org.knowm.xchange.bitfinex.BitfinexResilience.BITFINEX_RATE_LIMITER;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.knowm.xchange.bitfinex.BitfinexExchange;
+import org.knowm.xchange.bitfinex.dto.BitfinexException;
+import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexTicker;
+import org.knowm.xchange.bitfinex.v1.dto.marketdata.*;
+import org.knowm.xchange.bitfinex.v2.dto.marketdata.*;
+import org.knowm.xchange.client.ResilienceRegistries;
+import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.currency.CurrencyPair;
+import si.mazi.rescu.HttpStatusIOException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.knowm.xchange.bitfinex.BitfinexExchange;
-import org.knowm.xchange.bitfinex.dto.BitfinexException;
-import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexDepth;
-import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexLend;
-import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexLendDepth;
-import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexSymbolDetail;
-import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexTicker;
-import org.knowm.xchange.bitfinex.v1.dto.marketdata.BitfinexTrade;
-import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexCandle;
-import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexFundingOrder;
-import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexFundingRawOrder;
-import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexPublicFundingTrade;
-import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexPublicTrade;
-import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexStats;
-import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexTradingOrder;
-import org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexTradingRawOrder;
-import org.knowm.xchange.bitfinex.v2.dto.marketdata.BookPrecision;
-import org.knowm.xchange.bitfinex.v2.dto.marketdata.Status;
-import org.knowm.xchange.client.ResilienceRegistries;
-import org.knowm.xchange.currency.Currency;
-import org.knowm.xchange.currency.CurrencyPair;
-import si.mazi.rescu.HttpStatusIOException;
+
+import static org.knowm.xchange.bitfinex.BitfinexResilience.BITFINEX_RATE_LIMITER;
 
 /**
  * Implementation of the market data service for Bitfinex
@@ -130,6 +118,13 @@ public class BitfinexMarketDataServiceRaw extends BitfinexBaseService {
   }
 
   //////// v2
+  public Integer[] getBitfinexPlatformStatus() throws IOException {
+    return decorateApiCall(
+            bitfinexV2::getPlatformStatus)
+            .withRetry(retry("platform-status"))
+            .withRateLimiter(rateLimiter(BITFINEX_RATE_LIMITER))
+            .call();
+  }
 
   public org.knowm.xchange.bitfinex.v2.dto.marketdata.BitfinexTicker[] getBitfinexTickers(
       Collection<CurrencyPair> currencyPairs) throws IOException {
