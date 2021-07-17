@@ -7,30 +7,48 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import org.junit.Test;
-import org.knowm.xchange.currency.Currency;
-import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.deribit.v2.dto.marketdata.DeribitOrderBook;
 import org.knowm.xchange.deribit.v2.dto.marketdata.DeribitTicker;
 import org.knowm.xchange.deribit.v2.dto.marketdata.DeribitTrade;
+import org.knowm.xchange.derivative.FuturesContract;
+import org.knowm.xchange.derivative.OptionsContract;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trade;
+import org.knowm.xchange.instrument.Instrument;
 
 public class DeribitAdaptersTest {
-
+  
   @Test
-  public void adaptCurrencyPair() {
-    // given
-    String instrumentName = "ETH-22FEB19-140-P";
+  public void adaptInstrument() {
+    Instrument instrument = DeribitAdapters.adaptInstrument("BTC-USDT-PERPETUAL-F");
+    assertThat(instrument).isExactlyInstanceOf(FuturesContract.class);
+    assertThat(instrument).isEqualTo(new FuturesContract("BTC-USDT-PERPETUAL"));
 
-    // when
-    CurrencyPair pair = DeribitAdapters.adaptCurrencyPair(instrumentName);
+    instrument = DeribitAdapters.adaptInstrument("ETH-PERPETUAL");
+    assertThat(instrument).isExactlyInstanceOf(FuturesContract.class);
+    assertThat(instrument).isEqualTo(new FuturesContract("ETH-USD-perpetual"));
 
-    // then
-    assertThat(pair).isNotNull();
-    assertThat(pair.base).isEqualTo(Currency.ETH);
-    assertThat(pair.counter).isEqualTo(new Currency("22FEB19-140-P"));
+    instrument = DeribitAdapters.adaptInstrument("ETH-31DEC21");
+    assertThat(instrument).isExactlyInstanceOf(FuturesContract.class);
+    assertThat(instrument).isEqualTo(new FuturesContract("ETH-USD-211231"));
+
+    instrument = DeribitAdapters.adaptInstrument("ETH-24SEP21-2040-P");
+    assertThat(instrument).isExactlyInstanceOf(OptionsContract.class);
+    assertThat(instrument).isEqualTo(new OptionsContract("ETH-USD-210924-2040-P"));
+
+    instrument = DeribitAdapters.adaptInstrument("BTC-PERPETUAL");
+    assertThat(instrument).isExactlyInstanceOf(FuturesContract.class);
+    assertThat(instrument).isEqualTo(new FuturesContract("BTC-USD-perpetual"));
+
+    instrument = DeribitAdapters.adaptInstrument("BTC-25MAR22");
+    assertThat(instrument).isExactlyInstanceOf(FuturesContract.class);
+    assertThat(instrument).isEqualTo(new FuturesContract("BTC-USD-220325"));
+
+    instrument = DeribitAdapters.adaptInstrument("BTC-24SEP21-7000-P");
+    assertThat(instrument).isExactlyInstanceOf(OptionsContract.class);
+    assertThat(instrument).isEqualTo(new OptionsContract("BTC-USD-210924-7000-P"));
   }
 
   @Test
@@ -47,7 +65,7 @@ public class DeribitAdaptersTest {
 
     // then
     assertThat(ticker).isNotNull();
-    assertThat(ticker.getCurrencyPair()).isEqualTo(new CurrencyPair("BTC", "3MAY19-5000-P"));
+    assertThat(ticker.getInstrument()).isEqualTo(new OptionsContract("BTC-USD-190503-5000-P"));
     assertThat(ticker.getOpen()).isEqualTo(new BigDecimal("0.5"));
     assertThat(ticker.getLast()).isEqualTo(new BigDecimal("0.0075"));
     assertThat(ticker.getBid()).isEqualTo(new BigDecimal("0.01"));
@@ -79,19 +97,19 @@ public class DeribitAdaptersTest {
     assertThat(orderBook.getBids().get(0).getType()).isEqualTo(Order.OrderType.BID);
     assertThat(orderBook.getBids().get(0).getLimitPrice()).isEqualTo(new BigDecimal("3955.75"));
     assertThat(orderBook.getBids().get(0).getOriginalAmount()).isEqualTo(new BigDecimal("30.0"));
-    assertThat(orderBook.getBids().get(0).getCurrencyPair())
-        .isEqualTo(new CurrencyPair("BTC", "PERPETUAL"));
+    assertThat(orderBook.getBids().get(0).getInstrument())
+            .isEqualTo(new FuturesContract("BTC-USD-PERPETUAL"));
     assertThat(orderBook.getBids().get(1).getType()).isEqualTo(Order.OrderType.BID);
     assertThat(orderBook.getBids().get(1).getLimitPrice()).isEqualTo(new BigDecimal("3940.75"));
     assertThat(orderBook.getBids().get(1).getOriginalAmount())
         .isEqualTo(new BigDecimal("102020.0"));
-    assertThat(orderBook.getBids().get(1).getCurrencyPair())
-        .isEqualTo(new CurrencyPair("BTC", "PERPETUAL"));
+    assertThat(orderBook.getBids().get(1).getInstrument())
+            .isEqualTo(new FuturesContract("BTC-USD-PERPETUAL"));
     assertThat(orderBook.getBids().get(2).getType()).isEqualTo(Order.OrderType.BID);
     assertThat(orderBook.getBids().get(2).getLimitPrice()).isEqualTo(new BigDecimal("3423.0"));
     assertThat(orderBook.getBids().get(2).getOriginalAmount()).isEqualTo(new BigDecimal("42840.0"));
-    assertThat(orderBook.getBids().get(2).getCurrencyPair())
-        .isEqualTo(new CurrencyPair("BTC", "PERPETUAL"));
+    assertThat(orderBook.getBids().get(2).getInstrument())
+            .isEqualTo(new FuturesContract("BTC-USD-PERPETUAL"));
     assertThat(orderBook.getAsks()).isEmpty();
   }
 
@@ -105,7 +123,7 @@ public class DeribitAdaptersTest {
     DeribitTrade deribitTrade = mapper.readValue(is, DeribitTrade.class);
 
     // when
-    Trade trade = DeribitAdapters.adaptTrade(deribitTrade);
+    Trade trade = DeribitAdapters.adaptTrade(deribitTrade, new FuturesContract("BTC-USD-PERPETUAL"));
 
     // then
     assertThat(trade).isNotNull();

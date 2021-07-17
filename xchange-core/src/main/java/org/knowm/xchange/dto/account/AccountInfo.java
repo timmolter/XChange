@@ -210,6 +210,10 @@ public final class AccountInfo implements Serializable {
     return timestamp;
   }
 
+  public Collection<OpenPosition> getOpenPositions() {
+    return openPositions;
+  }
+
   @Override
   public String toString() {
 

@@ -69,6 +69,14 @@ public class DeribitInstrument {
   @JsonProperty("option_type")
   private String optionType;
 
+  /** Maker commission for instrument */
+  @JsonProperty("maker_commission")
+  private BigDecimal makerCommission;
+
+  /** Taker commission for instrument */
+  @JsonProperty("taker_commission")
+  private BigDecimal takerCommission;
+
   public Date getExpirationTimestamp() {
     return new Date(expirationTimestamp);
   }

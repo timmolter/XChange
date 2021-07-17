@@ -21,7 +21,7 @@ public class DeribitOrderBook {
 
   /** Name of the underlying future, or index_price (options only) */
   @JsonProperty("underlying_index")
-  private BigDecimal underlyingIndex;
+  private String underlyingIndex;
 
   /** The timestamp (seconds since the Unix epoch, with millisecond precision) */
   @JsonProperty("timestamp")

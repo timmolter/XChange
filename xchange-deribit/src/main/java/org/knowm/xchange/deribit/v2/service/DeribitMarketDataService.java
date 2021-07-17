@@ -1,7 +1,6 @@
 package org.knowm.xchange.deribit.v2.service;
 
 import java.io.IOException;
-import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.deribit.v2.DeribitAdapters;
 import org.knowm.xchange.deribit.v2.DeribitExchange;
 import org.knowm.xchange.deribit.v2.dto.DeribitException;
@@ -12,6 +11,7 @@ import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.exceptions.ExchangeException;
+import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 
 /**
@@ -35,8 +35,8 @@ public class DeribitMarketDataService extends DeribitMarketDataServiceRaw
   }
 
   @Override
-  public Ticker getTicker(CurrencyPair currencyPair, Object... args) throws IOException {
-    String deribitInstrumentName = DeribitAdapters.adaptInstrumentName(currencyPair, args);
+  public Ticker getTicker(Instrument instrument, Object... args) throws IOException {
+    String deribitInstrumentName = DeribitAdapters.adaptInstrumentName(instrument);
     DeribitTicker deribitTicker;
 
     try {
@@ -48,8 +48,8 @@ public class DeribitMarketDataService extends DeribitMarketDataServiceRaw
   }
 
   @Override
-  public OrderBook getOrderBook(CurrencyPair currencyPair, Object... args) throws IOException {
-    String deribitInstrumentName = DeribitAdapters.adaptInstrumentName(currencyPair, args);
+  public OrderBook getOrderBook(Instrument instrument, Object... args) throws IOException {
+    String deribitInstrumentName = DeribitAdapters.adaptInstrumentName(instrument);
     DeribitOrderBook deribitOrderBook;
     try {
       deribitOrderBook = super.getDeribitOrderBook(deribitInstrumentName, null);
@@ -61,8 +61,8 @@ public class DeribitMarketDataService extends DeribitMarketDataServiceRaw
   }
 
   @Override
-  public Trades getTrades(CurrencyPair currencyPair, Object... args) throws IOException {
-    String deribitInstrumentName = DeribitAdapters.adaptInstrumentName(currencyPair, args);
+  public Trades getTrades(Instrument instrument, Object... args) throws IOException {
+    String deribitInstrumentName = DeribitAdapters.adaptInstrumentName(instrument);
     DeribitTrades deribitTrades;
 
     try {
@@ -72,6 +72,6 @@ public class DeribitMarketDataService extends DeribitMarketDataServiceRaw
       throw new ExchangeException(ex);
     }
 
-    return DeribitAdapters.adaptTrades(deribitTrades);
+    return DeribitAdapters.adaptTrades(deribitTrades, instrument);
   }
 }

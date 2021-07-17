@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Map;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.derivative.FuturesContract;
+import org.knowm.xchange.derivative.OptionsContract;
 import org.knowm.xchange.utils.ObjectMapperHelper;
 
 /**
@@ -29,6 +31,12 @@ public class ExchangeMetaData implements Serializable {
   @JsonProperty("currencies")
   private Map<Currency, CurrencyMetaData> currencies;
 
+  @JsonProperty("futures")
+  private Map<FuturesContract, DerivativeMetaData> futures;
+
+  @JsonProperty("options")
+  private Map<OptionsContract, DerivativeMetaData> options;
+
   @JsonProperty("public_rate_limits")
   private RateLimit[] publicRateLimits;
 
@@ -49,14 +57,27 @@ public class ExchangeMetaData implements Serializable {
    * @param currency Map of currency -> {@link CurrencyMetaData}
    */
   public ExchangeMetaData(
+          Map<CurrencyPair, CurrencyPairMetaData> currencyPairs,
+          Map<Currency, CurrencyMetaData> currency,
+          RateLimit[] publicRateLimits,
+          RateLimit[] privateRateLimits,
+          Boolean shareRateLimits) {
+    this(currencyPairs, currency, null, null, publicRateLimits, privateRateLimits, shareRateLimits);
+  }
+
+  public ExchangeMetaData(
       @JsonProperty("currency_pairs") Map<CurrencyPair, CurrencyPairMetaData> currencyPairs,
       @JsonProperty("currencies") Map<Currency, CurrencyMetaData> currency,
+      @JsonProperty("futures") Map<FuturesContract, DerivativeMetaData> futures,
+      @JsonProperty("options") Map<OptionsContract, DerivativeMetaData> options,
       @JsonProperty("public_rate_limits") RateLimit[] publicRateLimits,
       @JsonProperty("private_rate_limits") RateLimit[] privateRateLimits,
       @JsonProperty("share_rate_limits") Boolean shareRateLimits) {
 
     this.currencyPairs = currencyPairs;
     this.currencies = currency;
+    this.futures = futures;
+    this.options = options;
 
     this.publicRateLimits = publicRateLimits;
     this.privateRateLimits = privateRateLimits;
@@ -90,6 +111,14 @@ public class ExchangeMetaData implements Serializable {
     return currencies;
   }
 
+  public Map<FuturesContract, DerivativeMetaData> getFutures() {
+    return futures;
+  }
+
+  public Map<OptionsContract, DerivativeMetaData> getOptions() {
+    return options;
+  }
+
   public RateLimit[] getPublicRateLimits() {
     return publicRateLimits;
   }
@@ -113,6 +142,10 @@ public class ExchangeMetaData implements Serializable {
         + currencyPairs
         + ", currencies="
         + currencies
+        + ", futures="
+        + futures
+        + ", options="
+        + options    
         + ", publicRateLimits="
         + Arrays.toString(publicRateLimits)
         + ", privateRateLimits="
