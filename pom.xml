@@ -35,7 +35,7 @@
     <version.commons.lang3>3.12.0</version.commons.lang3>
     <version.fasterxml>2.12.4</version.fasterxml>
     <version.github.mmazi>2.1.0</version.github.mmazi>
-    <version.resilience4j>1.7.0</version.resilience4j>
+    <version.resilience4j>1.7.1</version.resilience4j>
     <version.junit>4.13.2</version.junit>
     <version.lombok>1.18.20</version.lombok>
     <version.knowm.xchart>3.8.0</version.knowm.xchart>
