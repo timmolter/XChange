@@ -82,7 +82,7 @@ public class BitfinexExchange extends BaseExchange implements Exchange {
       Map<CurrencyPair, BigDecimal> lastPrices =
           Arrays.stream(dataService.getBitfinexTickers(null))
               .map(BitfinexAdapters::adaptTicker)
-              .collect(Collectors.toMap(t -> t.getCurrencyPair(), t -> t.getLast()));
+              .collect(Collectors.toMap(t -> t.getCurrencyPair(), t -> t.getLast() == null ? BigDecimal.ZERO : t.getLast()));
 
       final List<BitfinexSymbolDetail> symbolDetails = dataService.getSymbolDetails();
       exchangeMetaData =
