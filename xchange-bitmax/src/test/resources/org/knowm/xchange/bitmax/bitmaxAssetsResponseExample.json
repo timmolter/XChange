@@ -1,0 +1,14 @@
+{
+  "code": 0,
+  "data": [
+    {
+      "assetCode" : "BTC",
+      "assetName" : "Bitcoin",
+      "precisionScale" : 9,
+      "nativeScale" : 8,
+      "withdrawalFee" : "5.0E-4",
+      "minWithdrawalAmt" : "0.01",
+      "status" : "Normal"
+    }
+  ]
+}

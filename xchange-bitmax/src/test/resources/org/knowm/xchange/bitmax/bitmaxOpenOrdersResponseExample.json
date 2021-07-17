@@ -1,0 +1,25 @@
+{
+  "ac": "CASH",
+  "accountId": "cshQtyfq8XLAA9kcf19h8bXHbAwwoqDo",
+  "code": 0,
+  "data": [
+    {
+      "avgPx": "0",
+      "cumFee": "0",
+      "cumFilledQty": "0",
+      "errorCode": "",
+      "feeAsset": "USDT",
+      "lastExecTime": 1576019723550,
+      "orderId": "s16ef21882ea0866943712034f36d83",
+      "orderQty": "0.0083",
+      "orderType": "Limit",
+      "price": "7105",
+      "seqNum": 8193258,
+      "side": "Buy",
+      "status": "New",
+      "stopPrice": "",
+      "symbol": "BTC/USDT",
+      "execInst": "NULL_VAL"
+    }
+  ]
+}

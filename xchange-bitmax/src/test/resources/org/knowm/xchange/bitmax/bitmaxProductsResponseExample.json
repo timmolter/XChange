@@ -1,0 +1,18 @@
+{
+  "code": 0,
+  "data": [
+    {
+      "symbol":                "BTMX/USDT",
+      "baseAsset":             "BTMX",
+      "quoteAsset":            "USDT",
+      "status":                "Normal",
+      "minNotional":           "5",
+      "maxNotional":           "100000",
+      "marginTradable":         true,
+      "commissionType":        "Quote",
+      "commissionReserveRate": "0.001",
+      "tickSize":              "0.000001",
+      "lotSize":               "0.001"
+    }
+  ]
+}

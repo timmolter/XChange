@@ -103,6 +103,7 @@
     <module>xchange-bitfinex</module>
     <module>xchange-bitflyer</module>
     <module>xchange-bithumb</module>
+    <module>xchange-bitmax</module>
     <module>xchange-bitmex</module>
     <module>xchange-bitso</module>
     <module>xchange-bitstamp</module>

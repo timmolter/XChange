@@ -1,0 +1,16 @@
+{
+  "code": 0,
+  "data": {
+    "ac": "MARGIN",
+    "accountId": "cshQtyfq8XLAA9kcf19h8bXHbAwwoqDo",
+    "action": "place-order",
+    "info": {
+      "id":        "16e607e2b83a8bXHbAwwoqDo55c166fa",
+      "orderId":   "16e85b4d9b9a8bXHbAwwoqDoc3d66830",
+      "orderType": "Market",
+      "symbol":    "BTC/USDT",
+      "timestamp":  1573576916201
+    },
+    "status": "Ack"
+  }
+}

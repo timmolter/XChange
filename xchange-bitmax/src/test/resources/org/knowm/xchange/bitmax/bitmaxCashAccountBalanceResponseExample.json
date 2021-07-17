@@ -1,0 +1,20 @@
+{
+  "code": 0,
+  "data": [
+    {
+      "asset":            "USDT",
+      "totalBalance":    "1285.366663467",
+      "availableBalance": "1285.366663467"
+    },
+    {
+      "asset":            "BTC",
+      "totalBalance":    "22.1308675",
+      "availableBalance": "16.1308675"
+    },
+    {
+      "asset":            "ETH",
+      "totalBalance":     "0.6",
+      "availableBalance": "0.6"
+    }
+  ]
+}
