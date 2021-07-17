@@ -26,6 +26,14 @@ public class OkexResponse<V> {
     return data;
   }
 
+  public String getCode() {
+    return code;
+  }
+
+  public String getMsg() {
+    return msg;
+  }
+
   @Override
   public String toString() {
     return "OkexResponse{" + "code=" + code + ", msg=" + msg + '}';

@@ -231,6 +231,12 @@
 			<artifactId>xchange-okcoin</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<!-- XChange Okex exchange support -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>xchange-okex</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!-- XChange Bleutrade exchange support -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>

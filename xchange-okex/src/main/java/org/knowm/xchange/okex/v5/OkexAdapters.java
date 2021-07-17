@@ -1,28 +1,35 @@
 package org.knowm.xchange.okex.v5;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
-import org.knowm.xchange.derivative.FuturesContract;
 import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.dto.marketdata.OrderBook;
+import org.knowm.xchange.dto.marketdata.Trade;
+import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
 import org.knowm.xchange.dto.meta.CurrencyPairMetaData;
 import org.knowm.xchange.dto.meta.ExchangeMetaData;
 import org.knowm.xchange.dto.meta.WalletHealth;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
-import org.knowm.xchange.exceptions.NotYetImplementedForExchangeException;
 import org.knowm.xchange.instrument.Instrument;
+import org.knowm.xchange.okex.v5.dto.OkexResponse;
 import org.knowm.xchange.okex.v5.dto.marketdata.OkexCurrency;
 import org.knowm.xchange.okex.v5.dto.marketdata.OkexInstrument;
+import org.knowm.xchange.okex.v5.dto.marketdata.OkexOrderbook;
+import org.knowm.xchange.okex.v5.dto.marketdata.OkexTrade;
 import org.knowm.xchange.okex.v5.dto.trade.OkexAmendOrderRequest;
-import org.knowm.xchange.okex.v5.dto.trade.OkexOrderRequest;
 import org.knowm.xchange.okex.v5.dto.trade.OkexOrderDetails;
+import org.knowm.xchange.okex.v5.dto.trade.OkexOrderRequest;
 
 /** Author: Max Gao (gaamox@tutanota.com) Created: 08-06-2021 */
 public class OkexAdapters {
@@ -48,7 +55,8 @@ public class OkexAdapters {
 
   public static OpenOrders adaptOpenOrders(List<OkexOrderDetails> orders) {
     List<LimitOrder> openOrders =
-        orders.stream()
+        orders
+            .stream()
             .map(
                 order ->
                     new LimitOrder(
@@ -81,30 +89,104 @@ public class OkexAdapters {
   }
 
   public static OkexOrderRequest adaptOrder(LimitOrder order) {
+    String positionEffect = null;
+    switch (order.getType()) {
+      case BID:
+        positionEffect = "long";
+        break;
+      case ASK:
+        positionEffect = "short";
+        break;
+      case EXIT_ASK:
+        positionEffect = "short";
+        break;
+      case EXIT_BID:
+        positionEffect = "long";
+        break;
+    }
+
     return OkexOrderRequest.builder()
-        .instrumentId(adaptCurrencyPairId((CurrencyPair) order.getInstrument()))
-        .tradeMode("cash")
+        .instrumentId(adaptInstrumentId(order.getInstrument()))
+        .tradeMode(order.getInstrument() instanceof CurrencyPair ? "cash" : "cross")
         .side(order.getType() == Order.OrderType.BID ? "buy" : "sell")
+        .posSide(positionEffect)
         .orderType("limit")
         .amount(order.getOriginalAmount().toString())
         .price(order.getLimitPrice().toString())
         .build();
   }
 
+  public static OrderBook adaptOrderBook(
+      OkexResponse<List<OkexOrderbook>> okexOrderbook, Instrument instrument) {
+
+    List<LimitOrder> asks = new ArrayList<>();
+    List<LimitOrder> bids = new ArrayList<>();
+
+    okexOrderbook
+        .getData()
+        .get(0)
+        .getAsks()
+        .forEach(
+            okexAsk -> {
+              asks.add(
+                  adaptOrderbookOrder(
+                      okexAsk.getVolume(), okexAsk.getPrice(), instrument, Order.OrderType.ASK));
+            });
+
+    okexOrderbook
+        .getData()
+        .get(0)
+        .getBids()
+        .forEach(
+            okexBid -> {
+              bids.add(
+                  adaptOrderbookOrder(
+                      okexBid.getVolume(), okexBid.getPrice(), instrument, Order.OrderType.BID));
+            });
+
+    return new OrderBook(Date.from(Instant.now()), asks, bids);
+  }
+
+  public static LimitOrder adaptOrderbookOrder(
+      BigDecimal amount, BigDecimal price, Instrument instrument, Order.OrderType orderType) {
+
+    return new LimitOrder(orderType, amount, instrument, "", null, price);
+  }
+
+  public static String adaptCurrencyPairId(Instrument instrument) {
+    return instrument.toString().replace('/', '-');
+  }
+
   public static String adaptInstrumentId(Instrument instrument) {
-    if (instrument instanceof CurrencyPair) {
-      return adaptCurrencyPairId((CurrencyPair) instrument);
-    }
-
-    if (instrument instanceof FuturesContract) {
-      throw new NotYetImplementedForExchangeException();
-    }
-
-    return null;
+    return adaptCurrencyPairId(instrument);
   }
 
   public static String adaptCurrencyPairId(CurrencyPair currencyPair) {
     return currencyPair.toString().replace('/', '-');
+  }
+
+  public static Trades adaptTrades(List<OkexTrade> okexTrades, Instrument instrument) {
+    List<Trade> trades = new ArrayList<>();
+
+    okexTrades.forEach(
+        okexTrade -> {
+          trades.add(
+              new Trade.Builder()
+                  .id(okexTrade.getTradeId())
+                  .instrument(instrument)
+                  .originalAmount(okexTrade.getSz())
+                  .price(okexTrade.getPx())
+                  .timestamp(okexTrade.getTs())
+                  .type(adaptOkexOrderSideToOrderType(okexTrade.getSide()))
+                  .build());
+        });
+
+    return new Trades(trades);
+  }
+
+  public static Order.OrderType adaptOkexOrderSideToOrderType(String okexOrderSide) {
+
+    return okexOrderSide.equals("buy") ? Order.OrderType.BID : Order.OrderType.ASK;
   }
 
   private static Currency adaptCurrency(OkexCurrency currency) {
@@ -162,7 +244,8 @@ public class OkexAdapters {
     }
 
     if (currs != null) {
-      currs.stream()
+      currs
+          .stream()
           .forEach(
               currency ->
                   currencies.put(
