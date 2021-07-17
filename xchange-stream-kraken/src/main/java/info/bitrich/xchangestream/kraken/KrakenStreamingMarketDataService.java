@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import info.bitrich.xchangestream.kraken.dto.enums.KrakenSubscriptionName;
 import io.reactivex.Observable;
+import org.apache.commons.lang3.ObjectUtils;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
@@ -36,7 +37,7 @@ public class KrakenStreamingMarketDataService implements StreamingMarketDataServ
       String channelName = getChannelName(KrakenSubscriptionName.book, currencyPair);
       TreeSet<LimitOrder> bids = Sets.newTreeSet();
       TreeSet<LimitOrder> asks = Sets.newTreeSet();
-      int depth = KrakenStreamingService.parseOrderBookSize(args);
+      int depth = ObjectUtils.defaultIfNull(KrakenStreamingService.parseOrderBookSize(args), KrakenStreamingService.ORDER_BOOK_SIZE_DEFAULT);
       return subscribe(channelName, MIN_DATA_ARRAY_SIZE, args).map(arrayNode -> {
                             try {
                                     return KrakenStreamingAdapters.adaptOrderbookMessage(depth, bids, asks, currencyPair, arrayNode);

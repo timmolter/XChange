@@ -198,7 +198,7 @@ public class KrakenStreamingService extends JsonNettyStreamingService {
               reqID,
               subscribe,
               Collections.singletonList(pair),
-              new KrakenSubscriptionConfig(subscriptionName, parseOrderBookSize(args), null));
+              new KrakenSubscriptionConfig(subscriptionName, parseOrderBookSize(args),null));
       return objectMapper.writeValueAsString(subscriptionMessage);
     }
   }
@@ -267,7 +267,7 @@ public class KrakenStreamingService extends JsonNettyStreamingService {
     }
   }
 
-  static int parseOrderBookSize(Object[] args) {
+  static Integer parseOrderBookSize(Object[] args) {
     if (args != null && args.length > 0) {
       Object obSizeParam = args[0];
       LOG.debug("Specified Kraken order book size: {}", obSizeParam);
@@ -283,17 +283,7 @@ public class KrakenStreamingService extends JsonNettyStreamingService {
                 ORDER_BOOK_SIZE_DEFAULT);
         return ORDER_BOOK_SIZE_DEFAULT;
       }
-      LOG.error(
-              "Order book size param type {} is invalid. Expected: {}. Default order book size has been used {}",
-              obSizeParam.getClass().getName(),
-              Number.class,
-              ORDER_BOOK_SIZE_DEFAULT);
-      return ORDER_BOOK_SIZE_DEFAULT;
     }
-
-    LOG.debug(
-            "Order book size param has not been specified. Default order book size has been used: {}",
-            ORDER_BOOK_SIZE_DEFAULT);
-    return ORDER_BOOK_SIZE_DEFAULT;
+    return null;
   }
 }
