@@ -1,0 +1,10 @@
+{
+  "public_rate_limits": [
+    {
+      "calls": 100,
+      "time_span": 1,
+      "time_unit": "seconds"
+    }
+  ],
+  "share_rate_limits": false
+}

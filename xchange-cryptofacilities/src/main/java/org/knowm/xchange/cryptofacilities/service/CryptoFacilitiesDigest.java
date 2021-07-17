@@ -46,12 +46,12 @@ public class CryptoFacilitiesDigest extends BaseParamsDigest {
       throw new RuntimeException(
           "Illegal algorithm for post body digest. Check the implementation.");
     }
-    String decodedQuery =
-        URLDecoder.decode(
-            restInvocation.getParamsMap().get(QueryParam.class).asQueryString(),
-            StandardCharsets.UTF_8);
-    sha256.update(decodedQuery.getBytes());
     try {
+      String decodedQuery =
+              URLDecoder.decode(
+                      restInvocation.getParamsMap().get(QueryParam.class).asQueryString(), "UTF-8");
+      sha256.update(decodedQuery.getBytes());
+
       sha256.update(
           URLDecoder.decode(restInvocation.getRequestBody(), StandardCharsets.UTF_8.name())
               .getBytes());
