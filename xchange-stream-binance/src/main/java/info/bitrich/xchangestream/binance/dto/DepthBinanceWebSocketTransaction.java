@@ -7,6 +7,7 @@ import org.knowm.xchange.binance.dto.marketdata.BinanceOrderbook;
 public class DepthBinanceWebSocketTransaction extends ProductBinanceWebSocketTransaction {
 
   private final BinanceOrderbook orderBook;
+  private final BinanceRawOrderBookUpdate rawDepthUpdate;
   private final long lastUpdateId;
   private final long firstUpdateId;
 
@@ -22,6 +23,8 @@ public class DepthBinanceWebSocketTransaction extends ProductBinanceWebSocketTra
     this.firstUpdateId = firstUpdateId;
     this.lastUpdateId = lastUpdateId;
     orderBook = new BinanceOrderbook(lastUpdateId, _bids, _asks);
+    rawDepthUpdate = new BinanceRawOrderBookUpdate(eventType, eventTime, symbol,
+            firstUpdateId, lastUpdateId, _bids, _asks);
   }
 
   public BinanceOrderbook getOrderBook() {
@@ -35,4 +38,6 @@ public class DepthBinanceWebSocketTransaction extends ProductBinanceWebSocketTra
   public long getLastUpdateId() {
     return lastUpdateId;
   }
+
+  public BinanceRawOrderBookUpdate getRawDepthUpdate() { return rawDepthUpdate; }
 }

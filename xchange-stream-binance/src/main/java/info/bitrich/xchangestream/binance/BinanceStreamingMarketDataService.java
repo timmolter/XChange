@@ -129,6 +129,17 @@ public class BinanceStreamingMarketDataService implements StreamingMarketDataSer
         currencyPair, s -> triggerObservableBody(rawTradeStream(currencyPair)).share());
   }
 
+  public Observable<BinanceRawOrderBookUpdate> getRawOrderBookUpdates(CurrencyPair currencyPair, Object... args) {
+    if (!service.isLiveSubscriptionEnabled()
+            && !service.getProductSubscription().getOrderBook().contains(currencyPair)) {
+      throw new UpFrontSubscriptionRequiredException();
+    }
+    return orderBookRawUpdatesSubscriptions.computeIfAbsent(
+            currencyPair, s -> triggerObservableBody(rawOrderBookUpdates(currencyPair)))
+            .map(transaction -> transaction.getRawDepthUpdate()).share();
+  }
+
+
   /**
    * Api to get binance incremental order book updates. As binance websocket provides only api to
    * get incremental updates {@link #getOrderBook(CurrencyPair, Object...)} have to build book from
