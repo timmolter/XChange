@@ -34,7 +34,8 @@ public class FtxStreamingMarketDataService implements StreamingMarketDataService
   public Observable<Ticker> getTicker(CurrencyPair currencyPair, Object... args) {
     return service
         .subscribeChannel("ticker:" + FtxAdapters.adaptCurrencyPairToFtxMarket(currencyPair))
-        .map(res -> FtxStreamingAdapters.adaptTickerMessage(currencyPair, res));
+        .map(res -> FtxStreamingAdapters.adaptTickerMessage(currencyPair, res))
+        .filter(ticker -> ticker != FtxStreamingAdapters.NULL_TICKER);  // lets not send these backs
   }
 
   @Override
