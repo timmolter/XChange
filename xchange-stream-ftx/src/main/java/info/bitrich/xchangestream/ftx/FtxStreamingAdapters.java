@@ -29,7 +29,9 @@ public class FtxStreamingAdapters {
 
   private static final ObjectMapper mapper = StreamingObjectMapperHelper.getObjectMapper();
   /** Incoming values always has 1 trailing 0 after the decimal, and start with 1 zero */
-  private static final DecimalFormat df = new DecimalFormat("0.0########");  // 10 decimal places
+  private static final ThreadLocal<DecimalFormat> df = ThreadLocal.withInitial(() ->  new DecimalFormat("0.0########"));  // 10 decimal places
+  
+  static Ticker NULL_TICKER = new Ticker.Builder().build();  // not need to create a new one each time
 
   public static OrderBook adaptOrderbookMessage(
       OrderBook orderBook, Instrument instrument, JsonNode jsonNode) {
@@ -110,18 +112,20 @@ public class FtxStreamingAdapters {
 
   public static Long getOrderbookChecksum(List<LimitOrder> asks, List<LimitOrder> bids) {
     StringBuilder data = new StringBuilder(3072);
+    DecimalFormat decimalFormat = df.get();
+    
     for (int i = 0; i < 100; i++) {
       if (bids.size() > i) {
-        data.append(df.format(bids.get(i).getLimitPrice()))
+        data.append(decimalFormat.format(bids.get(i).getLimitPrice()))
             .append(":")
-            .append(df.format(bids.get(i).getOriginalAmount()))
+            .append(decimalFormat.format(bids.get(i).getOriginalAmount()))
             .append(":");
       }
 
       if (asks.size() > i) {
-        data.append(df.format(asks.get(i).getLimitPrice()))
+        data.append(decimalFormat.format(asks.get(i).getLimitPrice()))
             .append(":")
-            .append(df.format(asks.get(i).getOriginalAmount()))
+            .append(decimalFormat.format(asks.get(i).getOriginalAmount()))
             .append(":");
       }
     }
@@ -148,7 +152,7 @@ public class FtxStreamingAdapters {
             })
         .map(ftxTickerResponse -> ftxTickerResponse.toTicker(instrument))
         .findFirst()
-        .orElse(new Ticker.Builder().build());
+        .orElse(NULL_TICKER);
   }
 
   public static Iterable<Trade> adaptTradesMessage(Instrument instrument, JsonNode jsonNode) {
